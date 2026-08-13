@@ -1,0 +1,155 @@
+---
+import {
+  ADDON_FEATURES,
+  BASE_FEATURES,
+  BASE_PRICE_USD,
+  DOWNLOAD_URL,
+  FULL_PRICE_USD,
+  licenseApiBase,
+} from '../data/pricing';
+
+const apiBase = licenseApiBase();
+---
+
+<section class="cf-pkg section" id="packages">
+  <div class="cf-pkg__head" data-reveal>
+    <h2>Build your lifetime package</h2>
+    <p>
+      Doctor + Reception starts at <strong>${BASE_PRICE_USD}</strong>. Add modules as you need —
+      full access is <strong>${FULL_PRICE_USD}</strong>. Lifetime · no expiry.
+    </p>
+  </div>
+
+  <div class="cf-pkg__panel" data-reveal data-delay="60">
+    <div class="cf-pkg__builder">
+      <div class="cf-pkg__base">
+        <div class="cf-pkg__icon cf-pkg__icon--ok" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12l5 5L20 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="cf-pkg__meta">
+          <strong>Core · Doctor + Reception</strong>
+          <small>{BASE_FEATURES.map((f) => f.label).join(' · ')}</small>
+        </div>
+        <span class="cf-pkg__price">${BASE_PRICE_USD}</span>
+      </div>
+
+      <div class="cf-pkg__divider">
+        <span>Add modules</span>
+        <button type="button" id="pkg-full">Select full pack</button>
+      </div>
+
+      <div class="cf-pkg__list" id="pkg-addons">
+        {
+          ADDON_FEATURES.map((f) => (
+            <label class="cf-pkg__item">
+              <input type="checkbox" data-addon={f.key} data-price={f.price} />
+              <span class="cf-pkg__check" aria-hidden="true"></span>
+              <span class="cf-pkg__meta">
+                <strong>{f.label}</strong>
+                <small>{f.hint}</small>
+              </span>
+              <span class="cf-pkg__price">+${f.price}</span>
+            </label>
+          ))
+        }
+      </div>
+    </div>
+
+    <aside class="cf-pkg__checkout">
+      <p class="cf-pkg__label">Checkout</p>
+      <div class="cf-pkg__total">
+        <span>Total</span>
+        <strong>$<span id="pkg-price">{BASE_PRICE_USD}</span></strong>
+      </div>
+      <p class="cf-pkg__once">USD · lifetime · one-time</p>
+
+      <form id="pkg-form" class="cf-pkg__form" novalidate>
+        <input name="userName" required minlength="2" placeholder="Full name" autocomplete="name" />
+        <input name="email" type="email" required placeholder="Email" autocomplete="email" />
+        <input name="whatsappNumber" required minlength="10" placeholder="WhatsApp" autocomplete="tel" />
+        <p class="cf-pkg__err" id="pkg-err" hidden></p>
+        <button type="submit" class="cf-pkg__buy" id="pkg-buy">
+          Purchase &amp; get license — $<span id="pkg-btn-price">{BASE_PRICE_USD}</span>
+        </button>
+      </form>
+
+      <a class="cf-pkg__dl" href={DOWNLOAD_URL}>Download CareFlow-Setup.exe</a>
+      <p class="cf-pkg__fine">Stripe · Pakistan + global cards · auto license key</p>
+    </aside>
+  </div>
+</section>
+
+<script define:vars={{ apiBase, BASE_PRICE_USD, FULL_PRICE_USD }}>
+  const priceEl = document.getElementById('pkg-price');
+  const btnPrice = document.getElementById('pkg-btn-price');
+  const form = document.getElementById('pkg-form');
+  const err = document.getElementById('pkg-err');
+  const buy = document.getElementById('pkg-buy');
+  const fullBtn = document.getElementById('pkg-full');
+  const boxes = () => Array.from(document.querySelectorAll('[data-addon]'));
+
+  function calc() {
+    let addons = 0;
+    let all = true;
+    boxes().forEach((el) => {
+      if (el.checked) addons += Number(el.dataset.price || 0);
+      else all = false;
+    });
+    const total = all ? FULL_PRICE_USD : BASE_PRICE_USD + addons;
+    if (priceEl) priceEl.textContent = String(total);
+    if (btnPrice) btnPrice.textContent = String(total);
+    return { total };
+  }
+
+  boxes().forEach((el) => el.addEventListener('change', calc));
+  fullBtn?.addEventListener('click', () => {
+    boxes().forEach((el) => {
+      el.checked = true;
+    });
+    calc();
+  });
+  calc();
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form) return;
+    err.hidden = true;
+    const fd = new FormData(form);
+    const userName = String(fd.get('userName') || '').trim();
+    const email = String(fd.get('email') || '').trim();
+    const whatsappNumber = String(fd.get('whatsappNumber') || '').trim();
+    if (userName.length < 2 || !email.includes('@') || whatsappNumber.length < 10) {
+      err.textContent = 'Please enter a valid name, email and WhatsApp number.';
+      err.hidden = false;
+      return;
+    }
+
+    const addons = {};
+    boxes().forEach((el) => {
+      addons[el.dataset.addon] = el.checked;
+    });
+
+    buy.disabled = true;
+    buy.textContent = 'Redirecting to secure checkout...';
+    try {
+      const res = await fetch(apiBase + '/api/billing/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userName, email, whatsappNumber, addons }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.message || 'Checkout failed');
+      const url = json?.data?.url;
+      if (!url) throw new Error('No checkout URL returned');
+      window.location.href = url;
+    } catch (ex) {
+      err.textContent = (ex && ex.message) || 'Could not start checkout. Is the license server running?';
+      err.hidden = false;
+      buy.disabled = false;
+      const { total } = calc();
+      buy.innerHTML = 'Purchase &amp; get license — $' + total;
+    }
+  });
+</script>

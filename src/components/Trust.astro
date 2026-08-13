@@ -1,0 +1,139 @@
+---
+import Icon from './Icon.astro';
+
+const services = [
+  {
+    title: 'OPD & Tokens',
+    desc: 'Issue walk-in tokens, live waiting queues and print slips so the front desk never loses the next patient.',
+    accent: true,
+    icon: 'list' as const,
+  },
+  {
+    title: 'Doctor Desk',
+    desc: 'Visit queue, patient history and prescription pad in one calm workspace built for exam-room speed.',
+    accent: false,
+    icon: 'stethoscope' as const,
+  },
+  {
+    title: 'Billing & Pharmacy',
+    desc: 'Invoices, payments and stock stay linked to visits — unlock with your lifetime license.',
+    accent: false,
+    icon: 'pill' as const,
+  },
+  {
+    title: 'Offline + LAN',
+    desc: 'SQLite on Windows with multi-PC sync over your clinic LAN. No cloud needed for daily work.',
+    accent: false,
+    icon: 'activity' as const,
+  },
+];
+---
+
+<section class="section services" id="why">
+  <div class="head" data-reveal>
+    <h2>Our Services</h2>
+    <p>Everything a clinic desk needs — modular, lifetime, ready on Windows.</p>
+  </div>
+
+  <div class="grid">
+    {
+      services.map((s, i) => (
+        <article class:list={['card', s.accent && 'accent']} data-reveal data-delay={String(i * 70)}>
+          <div class="icon">
+            <Icon name={s.icon} size={20} />
+          </div>
+          <h3>{s.title}</h3>
+          <p>{s.desc}</p>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .services {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .head {
+    text-align: center;
+    max-width: 480px;
+    margin: 0 auto 32px;
+  }
+
+  .head h2 {
+    font-size: clamp(28px, 3.4vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 0 8px;
+  }
+
+  .head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  .card {
+    min-height: 100%;
+    background: #fff;
+    border-radius: 24px;
+    padding: 24px;
+    border: 1px solid rgba(15, 42, 26, 0.07);
+    box-shadow: 0 12px 32px rgba(15, 42, 26, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card.accent {
+    background: linear-gradient(160deg, #ecfdf5 0%, #dcfce7 50%, #fff 100%);
+    border-color: transparent;
+  }
+
+  .icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #fff;
+    color: var(--green);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.1);
+    flex-shrink: 0;
+  }
+
+  .card:not(.accent) .icon {
+    background: var(--green-soft);
+    box-shadow: none;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .card > p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #3f5246;
+  }
+
+  @media (max-width: 700px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

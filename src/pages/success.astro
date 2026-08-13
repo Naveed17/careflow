@@ -1,0 +1,193 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { DOWNLOAD_URL, licenseApiBase } from '../data/pricing';
+
+const apiBase = licenseApiBase();
+---
+
+<Layout
+  title="Payment success — CareFlow License"
+  description="Your CareFlow lifetime license key after Stripe checkout."
+  canonicalPath="/success"
+>
+  <section class="wrap">
+    <div class="card" id="result">
+      <p class="eyebrow">Lifetime license</p>
+      <h1>Thanks for your purchase</h1>
+      <p class="lead" id="status">Confirming payment and generating your license key…</p>
+
+      <div class="keybox" id="keybox" hidden>
+        <span>Your license key</span>
+        <code id="key"></code>
+        <button type="button" id="copy">Copy key</button>
+      </div>
+
+      <div class="actions">
+        <a class="primary" href={DOWNLOAD_URL}>Download CareFlow Setup.exe</a>
+        <a class="ghost" href="/#packages">Back to packages</a>
+      </div>
+      <p class="hint">
+        Activate this key in CareFlow after install. Keep it safe — it is tied to your purchase.
+      </p>
+    </div>
+  </section>
+
+  <script define:vars={{ apiBase }}>
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    const mockKey = params.get('key');
+    const status = document.getElementById('status');
+    const keybox = document.getElementById('keybox');
+    const keyEl = document.getElementById('key');
+    const copy = document.getElementById('copy');
+
+    function showKey(key) {
+      if (!key) return;
+      keybox.hidden = false;
+      keyEl.textContent = key;
+      status.textContent = 'Your lifetime license is ready. Download the app and activate with this key.';
+    }
+
+    copy?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(keyEl.textContent || '');
+        copy.textContent = 'Copied';
+      } catch {
+        copy.textContent = 'Copy failed';
+      }
+    });
+
+    (async () => {
+      if (mockKey) {
+        showKey(mockKey);
+        return;
+      }
+      if (!sessionId) {
+        status.textContent = 'Missing checkout session. If you already paid, contact support with your email.';
+        return;
+      }
+      try {
+        const res = await fetch(apiBase + '/api/billing/session/' + encodeURIComponent(sessionId));
+        const json = await res.json();
+        if (json?.data?.paid && json.data.licenseKey) {
+          showKey(json.data.licenseKey);
+        } else {
+          status.textContent =
+            'Payment is still processing. Refresh this page in a few seconds, or check your email.';
+        }
+      } catch {
+        status.textContent = 'Could not reach the license server to fetch your key. Try refresh.';
+      }
+    })();
+  </script>
+</Layout>
+
+<style>
+  .wrap {
+    min-height: 70vh;
+    display: grid;
+    place-items: center;
+    padding: 120px 20px 60px;
+  }
+
+  .card {
+    width: min(560px, 100%);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: 32px 28px;
+    box-shadow: 0 20px 50px rgba(15, 20, 16, 0.08);
+  }
+
+  .eyebrow {
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+  }
+
+  .lead {
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .keybox {
+    background: #f4faf6;
+    border: 1px dashed color-mix(in srgb, var(--green) 35%, var(--line));
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+
+  .keybox span {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .keybox code {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+
+  .keybox button {
+    border: 0;
+    background: var(--green);
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .primary,
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  .primary {
+    background: var(--green);
+    color: #fff;
+  }
+
+  .ghost {
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+
+  .hint {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>

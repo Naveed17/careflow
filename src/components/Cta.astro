@@ -1,0 +1,92 @@
+---
+import { DOWNLOAD_URL } from '../data/pricing';
+---
+
+<section class="section cta-wrap" id="download">
+  <div class="cta" data-reveal="scale">
+    <div class="blob" aria-hidden="true"></div>
+    <div class="copy">
+      <h2>Install CareFlow, then activate your lifetime key</h2>
+      <p>Windows installer · Offline SQLite · LAN multi-PC · Modules unlocked by license.</p>
+      <div class="actions">
+        <a class="btn" href={DOWNLOAD_URL}>Download CareFlow Setup.exe</a>
+        <a class="ghost" href="#packages">Build your package</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-wrap {
+    padding-bottom: 40px;
+  }
+
+  .cta {
+    position: relative;
+    overflow: hidden;
+    border-radius: 36px;
+    padding: clamp(36px, 5vw, 56px);
+    background: linear-gradient(145deg, #ecfdf5 0%, #dcfce7 40%, #bbf7d0 100%);
+    text-align: center;
+  }
+
+  .blob {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    right: -40px;
+    top: -60px;
+    border-radius: 55% 45% 48% 52% / 48% 52% 45% 55%;
+    background: rgba(22, 163, 74, 0.18);
+    pointer-events: none;
+  }
+
+  .copy {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  h2 {
+    font-size: clamp(26px, 3.4vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f2a1a;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #3f5246;
+    font-size: 15px;
+    margin-bottom: 22px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .btn,
+  .ghost {
+    display: inline-flex;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 13px 20px;
+    border-radius: 999px;
+  }
+
+  .btn {
+    background: #0f2a1a;
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(15, 42, 26, 0.18);
+  }
+
+  .ghost {
+    background: #fff;
+    color: var(--green-deep);
+    border: 1.5px solid color-mix(in srgb, var(--green) 30%, #c5d0c8);
+  }
+</style>

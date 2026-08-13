@@ -1,0 +1,73 @@
+---
+import { DOWNLOAD_URL } from '../data/pricing';
+import Icon from './Icon.astro';
+---
+
+<section class="cf-hero" id="explore">
+  <div class="cf-hero__inner">
+    <div class="cf-hero__copy" data-reveal>
+      <span class="cf-hero__badge">
+        <Icon name="plus" size={16} />
+        Let&apos;s start your clinic
+      </span>
+      <h1>The Best Partner for Your Clinic Flow</h1>
+      <p>
+        Patients, tokens, prescriptions, billing &amp; pharmacy — one offline-first Windows app
+        that keeps every desk in sync.
+      </p>
+      <div class="cf-hero__cta">
+        <a class="cf-btn cf-btn--solid" href="#packages">Get Lifetime License</a>
+        <a class="cf-btn cf-btn--ghost" href={DOWNLOAD_URL}>Try Download</a>
+      </div>
+    </div>
+
+    <div class="cf-hero__visual" aria-hidden="true">
+      <div class="cf-hero__blob" data-speed="-0.5"></div>
+
+      <svg class="cf-hero__lines" viewBox="0 0 420 420" fill="none" data-speed="-0.25">
+        <path
+          d="M70 280 C120 120, 180 320, 250 160 C300 60, 340 220, 380 140"
+          stroke="rgba(22,163,74,0.28)"
+          stroke-width="2"
+          stroke-dasharray="5 9"
+          stroke-linecap="round"
+        ></path>
+        <path
+          d="M40 160 C110 40, 160 240, 240 100 C290 20, 330 160, 370 90"
+          stroke="rgba(22,163,74,0.18)"
+          stroke-width="1.5"
+          stroke-dasharray="4 10"
+          stroke-linecap="round"
+        ></path>
+      </svg>
+
+      <div class="cf-hero__core" data-speed="-0.3">
+        <div class="cf-hero__core-ring">
+          <img src="/brand/logo.png" alt="" width="88" height="88" />
+          <span>CareFlow</span>
+        </div>
+      </div>
+
+      <div class="cf-orbit cf-orbit--1" data-speed="0.9"><Icon name="stethoscope" size={22} /></div>
+      <div class="cf-orbit cf-orbit--2" data-speed="-1.1"><Icon name="clipboard" size={20} /></div>
+      <div class="cf-orbit cf-orbit--3" data-speed="1.15"><Icon name="file" size={20} /></div>
+      <div class="cf-orbit cf-orbit--4" data-speed="-0.95"><Icon name="play" size={18} /></div>
+      <div class="cf-orbit cf-orbit--5" data-speed="0.8"><Icon name="heart" size={20} /></div>
+
+      <div class="cf-chip cf-chip--a" data-speed="1.3">
+        <span class="cf-chip__dot"></span>
+        <div>
+          <b>Token #14</b>
+          <small>Waiting · OPD</small>
+        </div>
+      </div>
+      <div class="cf-chip cf-chip--b" data-speed="-1.25">
+        <span class="cf-chip__dot cf-chip__dot--amber"></span>
+        <div>
+          <b>Live clinic</b>
+          <small>LAN synced</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

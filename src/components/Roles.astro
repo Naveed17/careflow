@@ -1,0 +1,96 @@
+---
+import Icon from './Icon.astro';
+---
+
+<section class="section roles-sec" id="roles">
+  <div class="section-head" data-reveal>
+    <h2>Built for every clinic desk and role</h2>
+    <p>Admin, Doctor, Reception, Lab and Pharmacy — each role gets the tools they need.</p>
+  </div>
+
+  <div class="roles">
+    <div class="role" data-reveal data-delay="0">
+      <div class="badge"><Icon name="shield" size={26} /></div>
+      <strong>Admin</strong>
+      <span>Overview &amp; control</span>
+    </div>
+    <div class="role" data-reveal data-delay="70">
+      <div class="badge"><Icon name="stethoscope" size={26} /></div>
+      <strong>Doctor</strong>
+      <span>Queue &amp; Rx pad</span>
+    </div>
+    <div class="role" data-reveal data-delay="140">
+      <div class="badge"><Icon name="clipboard" size={26} /></div>
+      <strong>Reception</strong>
+      <span>Tokens &amp; booking</span>
+    </div>
+    <div class="role" data-reveal data-delay="210">
+      <div class="badge"><Icon name="flask" size={26} /></div>
+      <strong>Lab</strong>
+      <span>Orders &amp; results</span>
+    </div>
+    <div class="role" data-reveal data-delay="280">
+      <div class="badge"><Icon name="pill" size={26} /></div>
+      <strong>Pharmacy</strong>
+      <span>Stock &amp; inventory</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-head {
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto 36px;
+  }
+
+  .section-head h2 {
+    font-size: clamp(28px, 3.6vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+  }
+
+  .section-head p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .roles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 28px 36px;
+  }
+
+  .role {
+    text-align: center;
+    width: 120px;
+  }
+
+  .badge {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    color: var(--green);
+    border: 1px solid rgba(22, 163, 74, 0.14);
+    box-shadow: 0 12px 28px rgba(22, 163, 74, 0.12);
+  }
+
+  strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 2px;
+  }
+
+  .role > span {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Trust from '../components/Trust.astro';
+import Benefits from '../components/Benefits.astro';
+import Packages from '../components/Packages.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Modules from '../components/Modules.astro';
+import Roles from '../components/Roles.astro';
+import Faq from '../components/Faq.astro';
+import Cta from '../components/Cta.astro';
+import { defaultSeo } from '../data/seo';
+---
+
+<Layout
+  title={defaultSeo.title}
+  description={defaultSeo.description}
+  keywords={defaultSeo.keywords}
+  canonicalPath="/"
+>
+  <Hero />
+  <Trust />
+  <Benefits />
+  <Packages />
+  <Testimonials />
+  <Modules />
+  <Roles />
+  <Faq />
+  <Cta />
+</Layout>

@@ -1,0 +1,110 @@
+---
+import { faqs } from '../data/seo';
+---
+
+<section class="section faq" id="faq" aria-labelledby="faq-heading">
+  <div class="head" data-reveal>
+    <h2 id="faq-heading">Common questions</h2>
+    <p>Straight answers about CareFlow for clinics evaluating desktop OPD software.</p>
+  </div>
+
+  <div class="list">
+    {
+      faqs.map((item, i) => (
+        <details class="item" data-reveal data-delay={String(i * 40)} open={i === 0}>
+          <summary>
+            <h3>{item.question}</h3>
+          </summary>
+          <p>{item.answer}</p>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .faq {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .head {
+    text-align: center;
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+
+  .head h2 {
+    margin: 0 0 8px;
+    font-size: clamp(28px, 3.4vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .list {
+    display: grid;
+    gap: 10px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .item {
+    background: #fff;
+    border: 1px solid rgba(15, 42, 26, 0.07);
+    border-radius: 16px;
+    padding: 0 18px;
+  }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: '+';
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: var(--green-soft);
+    color: var(--green-deep);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 16px;
+  }
+
+  details[open] summary::after {
+    content: '–';
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .item > p {
+    margin: 0;
+    padding: 0 0 16px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+</style>

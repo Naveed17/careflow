@@ -1,0 +1,265 @@
+---
+import { site, defaultSeo, faqs } from '../data/seo';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  canonicalPath?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+}
+
+const {
+  title = defaultSeo.title,
+  description = defaultSeo.description,
+  keywords = defaultSeo.keywords,
+  canonicalPath = '/',
+  ogImage = defaultSeo.ogImage,
+  noindex = false,
+  type = 'website',
+} = Astro.props;
+
+const canonicalURL = new URL(canonicalPath, site.url).toString();
+const imageURL = new URL(ogImage, site.url).toString();
+const pageUrl = Astro.url ? new URL(Astro.url.pathname, site.url).toString() : canonicalURL;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: site.name,
+    legalName: site.legalName,
+    url: site.url,
+    logo: new URL('/brand/logo.png', site.url).toString(),
+    email: site.email,
+    sameAs: site.sameAs,
+    description: defaultSeo.description,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.name,
+    url: site.url,
+    description: defaultSeo.description,
+    inLanguage: 'en-PK',
+    publisher: { '@type': 'Organization', name: site.name },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: title,
+    description,
+    url: pageUrl,
+    isPartOf: { '@type': 'WebSite', url: site.url, name: site.name },
+    about: {
+      '@type': 'SoftwareApplication',
+      name: 'CareFlow',
+    },
+    primaryImageOfPage: {
+      '@type': 'ImageObject',
+      url: imageURL,
+    },
+    inLanguage: 'en-PK',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'CareFlow',
+    applicationCategory: 'BusinessApplication',
+    applicationSubCategory: 'Clinic Management Software',
+    operatingSystem: 'Windows',
+    offers: {
+      '@type': 'Offer',
+      url: site.url,
+      availability: 'https://schema.org/InStock',
+      category: 'Clinic Management Software',
+    },
+    description: defaultSeo.description,
+    url: site.url,
+    image: imageURL,
+    screenshot: new URL('/snapshots/prescription-pdf.png', site.url).toString(),
+    featureList: [
+      'Patient records with MR numbers',
+      'OPD token queue and print slips',
+      'Appointments and doctor schedules',
+      'Prescription pad with PDF print',
+      'Billing and payments',
+      'Pharmacy inventory',
+      'Lab orders and results',
+      'Role-based access control',
+      'Offline SQLite database',
+      'LAN multi-PC clinic sync',
+    ],
+    softwareHelp: {
+      '@type': 'WebPage',
+      url: `${site.url}/#faq`,
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: site.url,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Modules',
+        item: `${site.url}/#modules`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'FAQ',
+        item: `${site.url}/#faq`,
+      },
+    ],
+  },
+];
+---
+
+<!doctype html>
+<html lang="en-PK">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords.join(', ')} />
+    <meta name="author" content={site.name} />
+    <meta name="creator" content={site.name} />
+    <meta name="publisher" content={site.name} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <meta name="googlebot" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <meta name="theme-color" content={defaultSeo.themeColor} />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="application-name" content="CareFlow" />
+    <meta name="apple-mobile-web-app-title" content="CareFlow" />
+    <meta name="geo.region" content="PK" />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" hreflang="en" href={canonicalURL} />
+    <link rel="alternate" hreflang="en-PK" href={canonicalURL} />
+    <link rel="alternate" hreflang="x-default" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:image:secure_url" content={imageURL} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1536" />
+    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:alt" content={defaultSeo.ogImageAlt} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageURL} />
+    <meta name="twitter:image:alt" content={defaultSeo.ogImageAlt} />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/brand/logo.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top" data-header>
+      <div class="top-inner">
+        <a class="brand" href="/" aria-label="CareFlow home">
+          <img src="/brand/logo.png" alt="CareFlow clinic management logo" width="36" height="36" />
+          <span>CareFlow</span>
+        </a>
+        <nav aria-label="Primary">
+          <a href="#explore">Home</a>
+          <a href="#why">Services</a>
+          <a href="#packages">Packages</a>
+          <a href="#modules">Modules</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <a class="btn" href="#packages">Get Started</a>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="foot">
+      <div class="wave" aria-hidden="true">
+        <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
+          <path d="M0,50 C180,90 360,10 540,40 C720,70 900,95 1080,45 C1260,-5 1380,70 1440,35 L1440,90 L0,90 Z" fill="#0f2a1a"></path>
+        </svg>
+      </div>
+      <div class="foot-body">
+        <div class="foot-inner">
+          <div class="foot-grid">
+            <div class="foot-brand">
+              <div class="brand-row">
+                <img src="/brand/logo.png" alt="CareFlow logo" width="36" height="36" />
+                <strong>CareFlow</strong>
+              </div>
+              <p>Windows desktop clinic management — patients, OPD tokens, prescriptions, billing, pharmacy &amp; lab.</p>
+              <div class="social" aria-label="Social">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+            <div>
+              <h3>Product</h3>
+              <nav class="foot-nav" aria-label="Product">
+                <a href="#packages">Packages</a>
+                <a href="#modules">Modules</a>
+                <a href="#download">Download</a>
+              </nav>
+            </div>
+            <div>
+              <h3>Company</h3>
+              <nav class="foot-nav" aria-label="Company">
+                <a href="#benefits">Why CareFlow</a>
+                <a href="#testimonials">Customers</a>
+                <a href="#faq">FAQ</a>
+              </nav>
+            </div>
+          </div>
+          <p class="copy">© {new Date().getFullYear()} CareFlow · Lifetime clinic software for Windows</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>
