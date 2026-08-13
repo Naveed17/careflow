@@ -7,7 +7,7 @@ const apiBase = licenseApiBase();
 
 <Layout
   title="Payment success — CareFlow License"
-  description="Your CareFlow lifetime license key after Stripe checkout."
+  description="Your CareFlow lifetime license key after Paddle checkout."
   canonicalPath="/success"
 >
   <section class="wrap">
@@ -34,7 +34,7 @@ const apiBase = licenseApiBase();
 
   <script define:vars={{ apiBase }}>
     const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get('session_id');
+    const sessionId = params.get('session_id') || params.get('_ptxn') || params.get('txn');
     const mockKey = params.get('key');
     const status = document.getElementById('status');
     const keybox = document.getElementById('keybox');

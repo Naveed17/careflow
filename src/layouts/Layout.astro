@@ -1,5 +1,6 @@
 ---
 import { site, defaultSeo, faqs } from '../data/seo';
+import PaddleCheckout from '../components/PaddleCheckout.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -195,6 +196,7 @@ const jsonLd = [
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <PaddleCheckout />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>

@@ -1,0 +1,42 @@
+---
+const token = String(import.meta.env.PUBLIC_PADDLE_CLIENT_TOKEN || '').trim();
+const envFromFile = String(import.meta.env.PUBLIC_PADDLE_ENV || '').trim().toLowerCase();
+const env = envFromFile === 'production' || envFromFile === 'live'
+  ? 'production'
+  : envFromFile === 'sandbox' || token.startsWith('test_')
+    ? 'sandbox'
+    : 'production';
+
+const origin = Astro.url.origin.replace(/\/+$/, '');
+const successUrl = `${origin}/success`;
+const isSuccessPage = Astro.url.pathname.replace(/\/+$/, '') === '/success';
+const enabled = Boolean(token) && !isSuccessPage;
+---
+
+{enabled && (
+  <>
+    <script is:inline src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <script is:inline define:vars={{ token, env, successUrl }}>
+      (function bootPaddle() {
+        var Paddle = window.Paddle;
+        if (!Paddle) {
+          setTimeout(bootPaddle, 40);
+          return;
+        }
+        if (env === 'sandbox') {
+          Paddle.Environment.set('sandbox');
+        }
+        Paddle.Initialize({
+          token: token,
+          checkout: {
+            settings: {
+              displayMode: 'overlay',
+              theme: 'light',
+              successUrl: successUrl,
+            },
+          },
+        });
+      })();
+    </script>
+  </>
+)}
