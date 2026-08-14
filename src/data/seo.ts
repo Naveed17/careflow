@@ -48,7 +48,7 @@ export const faqs = [
   {
     question: 'Which clinic roles does CareFlow support?',
     answer:
-      'CareFlow includes dedicated workflows for Admin, Doctor, Reception, Lab technician, and Pharmacy. Each role sees the modules they need — queues, Rx pad, tokens, billing, inventory, or lab results.',
+      'CareFlow includes dedicated workflows for Admin, Doctor, Reception, Lab technician, and Pharmacy. The core package includes Admin + Receptionist accounts. Doctor, Lab and Pharmacist roles unlock with their modules. Extra admin accounts are an optional add-on.',
   },
   {
     question: 'Can CareFlow print OPD tokens and prescriptions?',
@@ -63,6 +63,6 @@ export const faqs = [
   {
     question: 'What modules are included in CareFlow?',
     answer:
-      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Inventory, Lab, Statistics, Doctors & Schedule, Users & Roles, and License Modules so clinics enable only what they need.',
+      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Inventory, Lab, Statistics, Doctors & Schedule, and staff accounts. Receptionist users are included in the core package; extra admin accounts and staff delete are an optional add-on.',
   },
 ];

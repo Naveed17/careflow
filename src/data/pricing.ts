@@ -13,7 +13,12 @@ export const BASE_FEATURES = [
   {
     key: 'reception',
     label: 'Reception / OPD Desk',
-    hint: 'Tokens, patients & doctor booking tools',
+    hint: 'Tokens, patients, booking & receptionist staff accounts',
+  },
+  {
+    key: 'staff',
+    label: 'Receptionist accounts',
+    hint: 'Users page included — add receptionist staff without an extra module',
   },
 ] as const;
 
@@ -23,7 +28,12 @@ export const ADDON_FEATURES = [
   { key: 'reports', label: 'Reports', hint: 'Operational & financial reports', price: 20 },
   { key: 'statistics', label: 'Statistics', hint: 'Charts & clinic analytics', price: 20 },
   { key: 'manageMedicines', label: 'Medicines Catalog', hint: 'Medicine list for Rx picker', price: 20 },
-  { key: 'manageUsers', label: 'Users & Roles', hint: 'Staff accounts and role control', price: 20 },
+  {
+    key: 'manageUsers',
+    label: 'Extra Admins',
+    hint: 'Delete staff & extra admin accounts (Receptionist is always included)',
+    price: 20,
+  },
   { key: 'pharmacy', label: 'Pharmacy / Inventory', hint: 'Stock, batches & pharmacist desk', price: 30 },
   { key: 'whatsapp', label: 'WhatsApp', hint: 'Patient messaging & document send', price: 20 },
   { key: 'ai', label: 'AI Assist', hint: 'History summarize & AI settings', price: 15 },
