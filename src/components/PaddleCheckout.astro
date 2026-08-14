@@ -8,7 +8,7 @@ const env = envFromFile === 'production' || envFromFile === 'live'
     : 'production';
 
 const origin = Astro.url.origin.replace(/\/+$/, '');
-const successUrl = `${origin}/success`;
+const successBase = `${origin}/success`;
 const isSuccessPage = Astro.url.pathname.replace(/\/+$/, '') === '/success';
 const enabled = Boolean(token) && !isSuccessPage;
 ---
@@ -16,13 +16,27 @@ const enabled = Boolean(token) && !isSuccessPage;
 {enabled && (
   <>
     <script is:inline src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-    <script is:inline define:vars={{ token, env, successUrl }}>
+    <script is:inline define:vars={{ token, env, successBase }}>
       (function bootPaddle() {
         var Paddle = window.Paddle;
         if (!Paddle) {
           setTimeout(bootPaddle, 40);
           return;
         }
+
+        var txn = new URLSearchParams(window.location.search).get('_ptxn') || '';
+        if (txn) {
+          try {
+            sessionStorage.setItem('careflow_ptxn', txn);
+          } catch (e) {}
+        }
+
+        function successWithTxn(id) {
+          var base = successBase;
+          if (!id) return base;
+          return base + (base.indexOf('?') >= 0 ? '&' : '?') + '_ptxn=' + encodeURIComponent(id);
+        }
+
         if (env === 'sandbox') {
           Paddle.Environment.set('sandbox');
         }
@@ -32,15 +46,17 @@ const enabled = Boolean(token) && !isSuccessPage;
             settings: {
               displayMode: 'overlay',
               theme: 'light',
-              successUrl: successUrl,
+              successUrl: successWithTxn(txn),
             },
           },
           eventCallback: function (event) {
             if (!event || event.name !== 'checkout.completed') return;
-            var txn = event.data && event.data.transaction_id;
-            if (!txn) return;
-            var next = successUrl + (successUrl.indexOf('?') >= 0 ? '&' : '?') + '_ptxn=' + encodeURIComponent(txn);
-            window.location.href = next;
+            var id = (event.data && event.data.transaction_id) || txn;
+            if (!id) return;
+            try {
+              sessionStorage.setItem('careflow_ptxn', id);
+            } catch (e) {}
+            window.location.href = successWithTxn(id);
           },
         });
       })();

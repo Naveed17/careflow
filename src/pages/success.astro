@@ -16,6 +16,12 @@ const apiBase = licenseApiBase();
       <h1>Thanks for your purchase</h1>
       <p class="lead" id="status">Confirming payment and generating your license key…</p>
 
+      <form id="recover" class="recover" hidden>
+        <p>No payment id was found in the URL. Paste the Paddle transaction id from your receipt (starts with txn_).</p>
+        <input id="txn-input" name="txn" placeholder="txn_..." autocomplete="off" />
+        <button type="submit">Get my license key</button>
+      </form>
+
       <div class="keybox" id="keybox" hidden>
         <span>Your license key</span>
         <div class="keyrow">
@@ -36,18 +42,34 @@ const apiBase = licenseApiBase();
 
   <script define:vars={{ apiBase }}>
     const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get('session_id') || params.get('_ptxn') || params.get('txn');
+    const storedTxn = (() => {
+      try {
+        return sessionStorage.getItem('careflow_ptxn') || '';
+      } catch {
+        return '';
+      }
+    })();
+    let sessionId = params.get('session_id') || params.get('_ptxn') || params.get('txn') || storedTxn;
     const mockKey = params.get('key');
     const status = document.getElementById('status');
     const keybox = document.getElementById('keybox');
     const keyEl = document.getElementById('key');
     const copy = document.getElementById('copy');
 
+    const recover = document.getElementById('recover');
+    const txnInput = document.getElementById('txn-input');
+
     function showKey(key) {
       if (!key) return;
       keybox.hidden = false;
+      if (recover) recover.hidden = true;
       keyEl.textContent = key;
       status.textContent = 'Your lifetime license is ready. Download the app and activate with this key.';
+      try {
+        sessionStorage.removeItem('careflow_ptxn');
+      } catch {
+        /* ignore */
+      }
     }
 
     function copyKey() {
@@ -74,30 +96,21 @@ const apiBase = licenseApiBase();
     copy?.addEventListener('click', copyKey);
     keyEl?.addEventListener('click', copyKey);
 
-    (async () => {
-      if (mockKey) {
-        showKey(mockKey);
-        return;
-      }
-      if (!sessionId) {
-        status.textContent = 'Missing checkout session. If you already paid, contact support with your email.';
-        return;
-      }
-
+    async function loadLicense(id) {
       const maxAttempts = 10;
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
-          const res = await fetch(apiBase + '/api/billing/session/' + encodeURIComponent(sessionId));
+          const res = await fetch(apiBase + '/api/billing/session/' + encodeURIComponent(id));
           const json = await res.json();
           if (json?.data?.paid && json.data.licenseKey) {
             showKey(json.data.licenseKey);
-            return;
+            return true;
           }
         } catch {
           if (attempt === maxAttempts) {
             status.textContent =
               'Could not reach the license server to fetch your key. If this page is https://, the API must also be https (not localhost). Try refresh.';
-            return;
+            return false;
           }
         }
         status.textContent =
@@ -105,7 +118,33 @@ const apiBase = licenseApiBase();
         await new Promise((r) => setTimeout(r, 2000));
       }
       status.textContent =
-        'Payment received, but the license key is not ready yet. Refresh this page, or contact support with your purchase email.';
+        'Payment received, but the license key is not ready yet. Refresh this page, or paste your txn_ id below.';
+      if (recover) recover.hidden = false;
+      return false;
+    }
+
+    recover?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = String(txnInput?.value || '').trim();
+      if (!id.startsWith('txn_')) {
+        status.textContent = 'Transaction id should start with txn_';
+        return;
+      }
+      status.textContent = 'Looking up your license key…';
+      await loadLicense(id);
+    });
+
+    (async () => {
+      if (mockKey) {
+        showKey(mockKey);
+        return;
+      }
+      if (!sessionId) {
+        status.textContent = 'Missing checkout session. Paste your Paddle transaction id (txn_...) to get the key.';
+        if (recover) recover.hidden = false;
+        return;
+      }
+      await loadLicense(sessionId);
     })();
   </script>
 </Layout>
@@ -146,6 +185,37 @@ const apiBase = licenseApiBase();
   .lead {
     color: var(--muted);
     margin-bottom: 20px;
+  }
+
+  .recover {
+    margin-bottom: 18px;
+  }
+
+  .recover p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .recover input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font: inherit;
+    margin-bottom: 8px;
+  }
+
+  .recover button {
+    border: 0;
+    background: var(--green);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
   }
 
   .keybox {
