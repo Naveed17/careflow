@@ -11,16 +11,10 @@ const apiBase = licenseApiBase();
   canonicalPath="/success"
 >
   <section class="wrap">
-    <div class="card" id="result">
+    <div class="card" id="result" hidden>
       <p class="eyebrow">Lifetime license</p>
       <h1>Thanks for your purchase</h1>
       <p class="lead" id="status">Confirming payment and generating your license key…</p>
-
-      <form id="recover" class="recover" hidden>
-        <p>No payment id was found in the URL. Paste the Paddle transaction id from your receipt (starts with txn_).</p>
-        <input id="txn-input" name="txn" placeholder="txn_..." autocomplete="off" />
-        <button type="submit">Get my license key</button>
-      </form>
 
       <div class="keybox" id="keybox" hidden>
         <span>Your license key</span>
@@ -38,31 +32,49 @@ const apiBase = licenseApiBase();
         Copy this key and activate it in CareFlow after install. Keep it safe — it is not emailed.
       </p>
     </div>
+
+    <div class="card error" id="not-found" hidden>
+      <p class="eyebrow danger">404</p>
+      <h1>Transaction ID not found</h1>
+      <p class="lead" id="not-found-msg">
+        This page only opens after a completed Paddle checkout with a valid transaction id in the URL.
+      </p>
+      <div class="actions">
+        <a class="primary" href="/#packages">Back to packages</a>
+        <a class="ghost" href="/">Go home</a>
+      </div>
+    </div>
   </section>
 
   <script define:vars={{ apiBase }}>
     const params = new URLSearchParams(window.location.search);
-    const storedTxn = (() => {
-      try {
-        return sessionStorage.getItem('careflow_ptxn') || '';
-      } catch {
-        return '';
-      }
-    })();
-    let sessionId = params.get('session_id') || params.get('_ptxn') || params.get('txn') || storedTxn;
-    const mockKey = params.get('key');
+    const rawTxn = String(params.get('_ptxn') || '').trim();
+    const txnOk = /^txn_[a-z0-9]+$/i.test(rawTxn);
+
+    const result = document.getElementById('result');
+    const notFound = document.getElementById('not-found');
+    const notFoundMsg = document.getElementById('not-found-msg');
     const status = document.getElementById('status');
     const keybox = document.getElementById('keybox');
     const keyEl = document.getElementById('key');
     const copy = document.getElementById('copy');
 
-    const recover = document.getElementById('recover');
-    const txnInput = document.getElementById('txn-input');
+    function showNotFound(message) {
+      if (result) result.hidden = true;
+      if (notFound) notFound.hidden = false;
+      if (notFoundMsg && message) notFoundMsg.textContent = message;
+      document.title = 'Transaction ID not found — CareFlow';
+    }
+
+    function showSuccessUi() {
+      if (notFound) notFound.hidden = true;
+      if (result) result.hidden = false;
+    }
 
     function showKey(key) {
       if (!key) return;
+      showSuccessUi();
       keybox.hidden = false;
-      if (recover) recover.hidden = true;
       keyEl.textContent = key;
       status.textContent = 'Your lifetime license is ready. Download the app and activate with this key.';
       try {
@@ -97,19 +109,24 @@ const apiBase = licenseApiBase();
     keyEl?.addEventListener('click', copyKey);
 
     async function loadLicense(id) {
+      showSuccessUi();
       const maxAttempts = 10;
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
         try {
           const res = await fetch(apiBase + '/api/billing/session/' + encodeURIComponent(id));
-          const json = await res.json();
+          if (res.status === 404) {
+            showNotFound('Transaction ID not found. No matching Paddle payment was found for this id.');
+            return false;
+          }
+          const json = await res.json().catch(() => null);
           if (json?.data?.paid && json.data.licenseKey) {
             showKey(json.data.licenseKey);
             return true;
           }
+          // Still processing — keep waiting
         } catch {
           if (attempt === maxAttempts) {
-            status.textContent =
-              'Could not reach the license server to fetch your key. If this page is https://, the API must also be https (not localhost). Try refresh.';
+            showNotFound('Could not verify this transaction id. Please try again from your Paddle receipt link.');
             return false;
           }
         }
@@ -117,34 +134,27 @@ const apiBase = licenseApiBase();
           'Payment is still processing (' + attempt + '/' + maxAttempts + '). Generating your license key…';
         await new Promise((r) => setTimeout(r, 2000));
       }
-      status.textContent =
-        'Payment received, but the license key is not ready yet. Refresh this page, or paste your txn_ id below.';
-      if (recover) recover.hidden = false;
+      showNotFound('Transaction ID not found or payment was not completed.');
       return false;
     }
 
-    recover?.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const id = String(txnInput?.value || '').trim();
-      if (!id.startsWith('txn_')) {
-        status.textContent = 'Transaction id should start with txn_';
-        return;
-      }
-      status.textContent = 'Looking up your license key…';
-      await loadLicense(id);
-    });
-
     (async () => {
-      if (mockKey) {
-        showKey(mockKey);
+      if (!rawTxn) {
+        showNotFound(
+          'No transaction id in the URL. Open this page only after checkout, e.g. /success?_ptxn=txn_…',
+        );
         return;
       }
-      if (!sessionId) {
-        status.textContent = 'Missing checkout session. Paste your Paddle transaction id (txn_...) to get the key.';
-        if (recover) recover.hidden = false;
+      if (!txnOk) {
+        showNotFound('Invalid transaction id. It must look like txn_01…');
         return;
       }
-      await loadLicense(sessionId);
+      try {
+        sessionStorage.setItem('careflow_ptxn', rawTxn);
+      } catch {
+        /* ignore */
+      }
+      await loadLicense(rawTxn);
     })();
   </script>
 </Layout>
@@ -175,6 +185,10 @@ const apiBase = licenseApiBase();
     margin-bottom: 8px;
   }
 
+  .eyebrow.danger {
+    color: #b91c1c;
+  }
+
   h1 {
     font-size: clamp(28px, 4vw, 36px);
     font-weight: 800;
@@ -185,37 +199,6 @@ const apiBase = licenseApiBase();
   .lead {
     color: var(--muted);
     margin-bottom: 20px;
-  }
-
-  .recover {
-    margin-bottom: 18px;
-  }
-
-  .recover p {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-
-  .recover input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    font: inherit;
-    margin-bottom: 8px;
-  }
-
-  .recover button {
-    border: 0;
-    background: var(--green);
-    color: #fff;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 800;
-    padding: 10px 14px;
-    border-radius: 10px;
-    cursor: pointer;
   }
 
   .keybox {
