@@ -35,6 +35,13 @@ const enabled = Boolean(token) && !isSuccessPage;
               successUrl: successUrl,
             },
           },
+          eventCallback: function (event) {
+            if (!event || event.name !== 'checkout.completed') return;
+            var txn = event.data && event.data.transaction_id;
+            if (!txn) return;
+            var next = successUrl + (successUrl.indexOf('?') >= 0 ? '&' : '?') + '_ptxn=' + encodeURIComponent(txn);
+            window.location.href = next;
+          },
         });
       })();
     </script>

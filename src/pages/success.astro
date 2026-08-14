@@ -18,8 +18,10 @@ const apiBase = licenseApiBase();
 
       <div class="keybox" id="keybox" hidden>
         <span>Your license key</span>
-        <code id="key"></code>
-        <button type="button" id="copy">Copy key</button>
+        <div class="keyrow">
+          <code id="key" tabindex="0" title="Click to copy"></code>
+          <button type="button" id="copy">Copy key</button>
+        </div>
       </div>
 
       <div class="actions">
@@ -27,7 +29,7 @@ const apiBase = licenseApiBase();
         <a class="ghost" href="/#packages">Back to packages</a>
       </div>
       <p class="hint">
-        Activate this key in CareFlow after install. Keep it safe — it is tied to your purchase.
+        Copy this key and activate it in CareFlow after install. Keep it safe — it is not emailed.
       </p>
     </div>
   </section>
@@ -48,14 +50,29 @@ const apiBase = licenseApiBase();
       status.textContent = 'Your lifetime license is ready. Download the app and activate with this key.';
     }
 
-    copy?.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(keyEl.textContent || '');
-        copy.textContent = 'Copied';
-      } catch {
-        copy.textContent = 'Copy failed';
-      }
-    });
+    function copyKey() {
+      const value = keyEl.textContent || '';
+      if (!value) return;
+      navigator.clipboard.writeText(value).then(
+        () => {
+          copy.textContent = 'Copied';
+          setTimeout(() => {
+            copy.textContent = 'Copy key';
+          }, 1800);
+        },
+        () => {
+          const range = document.createRange();
+          range.selectNodeContents(keyEl);
+          const sel = window.getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+          copy.textContent = 'Select and copy';
+        },
+      );
+    }
+
+    copy?.addEventListener('click', copyKey);
+    keyEl?.addEventListener('click', copyKey);
 
     (async () => {
       if (mockKey) {
@@ -66,18 +83,29 @@ const apiBase = licenseApiBase();
         status.textContent = 'Missing checkout session. If you already paid, contact support with your email.';
         return;
       }
-      try {
-        const res = await fetch(apiBase + '/api/billing/session/' + encodeURIComponent(sessionId));
-        const json = await res.json();
-        if (json?.data?.paid && json.data.licenseKey) {
-          showKey(json.data.licenseKey);
-        } else {
-          status.textContent =
-            'Payment is still processing. Refresh this page in a few seconds, or check your email.';
+
+      const maxAttempts = 10;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          const res = await fetch(apiBase + '/api/billing/session/' + encodeURIComponent(sessionId));
+          const json = await res.json();
+          if (json?.data?.paid && json.data.licenseKey) {
+            showKey(json.data.licenseKey);
+            return;
+          }
+        } catch {
+          if (attempt === maxAttempts) {
+            status.textContent =
+              'Could not reach the license server to fetch your key. If this page is https://, the API must also be https (not localhost). Try refresh.';
+            return;
+          }
         }
-      } catch {
-        status.textContent = 'Could not reach the license server to fetch your key. Try refresh.';
+        status.textContent =
+          'Payment is still processing (' + attempt + '/' + maxAttempts + '). Generating your license key…';
+        await new Promise((r) => setTimeout(r, 2000));
       }
+      status.textContent =
+        'Payment received, but the license key is not ready yet. Refresh this page, or contact support with your purchase email.';
     })();
   </script>
 </Layout>
@@ -138,12 +166,20 @@ const apiBase = licenseApiBase();
     margin-bottom: 6px;
   }
 
+  .keyrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
   .keybox code {
+    flex: 1 1 220px;
     display: block;
     font-size: 18px;
     font-weight: 800;
     letter-spacing: 0.04em;
-    margin-bottom: 10px;
+    cursor: pointer;
   }
 
   .keybox button {
@@ -151,11 +187,12 @@ const apiBase = licenseApiBase();
     background: var(--green);
     color: #fff;
     font: inherit;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
-    padding: 8px 12px;
+    padding: 10px 14px;
     border-radius: 10px;
     cursor: pointer;
+    white-space: nowrap;
   }
 
   .actions {
