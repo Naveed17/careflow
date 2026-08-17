@@ -9,14 +9,26 @@ const apiBase = licenseApiBase();
   title="Payment success — CareFlow License"
   description="Your CareFlow lifetime license key after Paddle checkout."
   canonicalPath="/success"
+  minimal
 >
   <section class="wrap">
+    <div class="card" id="loading">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="eyebrow">License server</p>
+      <h1>Generating your key</h1>
+      <p class="lead" id="status">Confirming payment and creating your lifetime license…</p>
+      <div class="bar" aria-hidden="true">
+        <span id="bar-fill"></span>
+      </div>
+      <p class="hint" id="progress">Talking to the license server…</p>
+    </div>
+
     <div class="card" id="result" hidden>
       <p class="eyebrow">Lifetime license</p>
-      <h1>Thanks for your purchase</h1>
-      <p class="lead" id="status">Confirming payment and generating your license key…</p>
+      <h1>You&apos;re all set</h1>
+      <p class="lead">Your lifetime license is ready. Copy the key, then download and activate CareFlow.</p>
 
-      <div class="keybox" id="keybox" hidden>
+      <div class="keybox" id="keybox">
         <span>Your license key</span>
         <div class="keyrow">
           <code id="key" tabindex="0" title="Click to copy"></code>
@@ -28,16 +40,14 @@ const apiBase = licenseApiBase();
         <a class="primary" href={DOWNLOAD_URL}>Download CareFlow Setup.exe</a>
         <a class="ghost" href="/#packages">Back to packages</a>
       </div>
-      <p class="hint">
-        Copy this key and activate it in CareFlow after install. Keep it safe — it is not emailed.
-      </p>
+      <p class="hint">Keep this key safe — it is not emailed.</p>
     </div>
 
     <div class="card error" id="not-found" hidden>
-      <p class="eyebrow danger">404</p>
-      <h1>Transaction ID not found</h1>
+      <p class="eyebrow danger">Not found</p>
+      <h1>Could not verify payment</h1>
       <p class="lead" id="not-found-msg">
-        This page only opens after a completed Paddle checkout with a valid transaction id in the URL.
+        This page only opens after a completed Paddle checkout with a valid transaction id.
       </p>
       <div class="actions">
         <a class="primary" href="/#packages">Back to packages</a>
@@ -51,32 +61,42 @@ const apiBase = licenseApiBase();
     const rawTxn = String(params.get('_ptxn') || '').trim();
     const txnOk = /^txn_[a-z0-9]+$/i.test(rawTxn);
 
+    const loading = document.getElementById('loading');
     const result = document.getElementById('result');
     const notFound = document.getElementById('not-found');
     const notFoundMsg = document.getElementById('not-found-msg');
     const status = document.getElementById('status');
-    const keybox = document.getElementById('keybox');
+    const progress = document.getElementById('progress');
+    const barFill = document.getElementById('bar-fill');
     const keyEl = document.getElementById('key');
     const copy = document.getElementById('copy');
 
+    function hideLoading() {
+      if (loading) loading.hidden = true;
+    }
+
+    function setProgress(attempt, max) {
+      if (barFill) barFill.style.width = Math.min(96, Math.round((attempt / max) * 100)) + '%';
+      if (progress) {
+        progress.textContent = 'License server request ' + attempt + ' of ' + max + '…';
+      }
+    }
+
     function showNotFound(message) {
+      hideLoading();
       if (result) result.hidden = true;
       if (notFound) notFound.hidden = false;
       if (notFoundMsg && message) notFoundMsg.textContent = message;
       document.title = 'Transaction ID not found — CareFlow';
     }
 
-    function showSuccessUi() {
-      if (notFound) notFound.hidden = true;
-      if (result) result.hidden = false;
-    }
-
     function showKey(key) {
       if (!key) return;
-      showSuccessUi();
-      keybox.hidden = false;
+      hideLoading();
+      if (notFound) notFound.hidden = true;
+      if (result) result.hidden = false;
+      if (barFill) barFill.style.width = '100%';
       keyEl.textContent = key;
-      status.textContent = 'Your lifetime license is ready. Download the app and activate with this key.';
       try {
         sessionStorage.removeItem('careflow_ptxn');
       } catch {
@@ -109,9 +129,15 @@ const apiBase = licenseApiBase();
     keyEl?.addEventListener('click', copyKey);
 
     async function loadLicense(id) {
-      showSuccessUi();
       const maxAttempts = 10;
       for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        setProgress(attempt, maxAttempts);
+        if (status) {
+          status.textContent =
+            attempt === 1
+              ? 'Confirming payment and creating your lifetime license…'
+              : 'Still generating your license key. This can take a few seconds…';
+        }
         try {
           const res = await fetch(apiBase + '/api/billing/session/' + encodeURIComponent(id));
           if (res.status === 404) {
@@ -123,15 +149,12 @@ const apiBase = licenseApiBase();
             showKey(json.data.licenseKey);
             return true;
           }
-          // Still processing — keep waiting
         } catch {
           if (attempt === maxAttempts) {
-            showNotFound('Could not verify this transaction id. Please try again from your Paddle receipt link.');
+            showNotFound('Could not reach the license server. Please try again from your Paddle receipt link.');
             return false;
           }
         }
-        status.textContent =
-          'Payment is still processing (' + attempt + '/' + maxAttempts + '). Generating your license key…';
         await new Promise((r) => setTimeout(r, 2000));
       }
       showNotFound('Transaction ID not found or payment was not completed.');
@@ -161,19 +184,37 @@ const apiBase = licenseApiBase();
 
 <style>
   .wrap {
-    min-height: 70vh;
+    min-height: 100dvh;
     display: grid;
     place-items: center;
-    padding: 120px 20px 60px;
+    padding: 88px 20px 28px;
+    overflow: auto;
   }
 
   .card {
-    width: min(560px, 100%);
+    width: min(480px, 100%);
     background: #fff;
     border: 1px solid var(--line);
-    border-radius: 28px;
-    padding: 32px 28px;
+    border-radius: 24px;
+    padding: 28px 24px;
     box-shadow: 0 20px 50px rgba(15, 20, 16, 0.08);
+    text-align: center;
+  }
+
+  .spinner {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 16px;
+    border: 3px solid var(--green-soft);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   .eyebrow {
@@ -190,15 +231,34 @@ const apiBase = licenseApiBase();
   }
 
   h1 {
-    font-size: clamp(28px, 4vw, 36px);
+    font-size: clamp(24px, 4vw, 32px);
     font-weight: 800;
     letter-spacing: -0.03em;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .lead {
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .bar {
+    height: 6px;
+    border-radius: 999px;
+    background: #eef6f0;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .bar span {
+    display: block;
+    height: 100%;
+    width: 8%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--green), #4ade80);
+    transition: width 0.4s ease;
   }
 
   .keybox {
@@ -206,7 +266,8 @@ const apiBase = licenseApiBase();
     border: 1px dashed color-mix(in srgb, var(--green) 35%, var(--line));
     border-radius: 16px;
     padding: 14px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+    text-align: left;
   }
 
   .keybox span {
@@ -252,6 +313,7 @@ const apiBase = licenseApiBase();
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    justify-content: center;
   }
 
   .primary,
@@ -276,8 +338,15 @@ const apiBase = licenseApiBase();
   }
 
   .hint {
-    margin-top: 16px;
+    margin-top: 14px;
     font-size: 12px;
     color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spinner {
+      animation: none;
+      border-top-color: var(--green);
+    }
   }
 </style>

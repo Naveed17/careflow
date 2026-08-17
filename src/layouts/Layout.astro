@@ -11,6 +11,7 @@ interface Props {
   ogImage?: string;
   noindex?: boolean;
   type?: 'website' | 'article';
+  minimal?: boolean;
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   ogImage = defaultSeo.ogImage,
   noindex = false,
   type = 'website',
+  minimal = false,
 } = Astro.props;
 
 const canonicalURL = new URL(canonicalPath, site.url).toString();
@@ -198,7 +200,7 @@ const jsonLd = [
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <PaddleCheckout />
   </head>
-  <body>
+  <body class={minimal ? 'page-minimal' : undefined}>
     <a class="skip" href="#main">Skip to content</a>
     <header class="top" data-header>
       <div class="top-inner">
@@ -207,18 +209,25 @@ const jsonLd = [
           <span>CareFlow</span>
         </a>
         <nav aria-label="Primary">
-          <a href="#explore">Home</a>
-          <a href="#why">Services</a>
-          <a href="#packages">Packages</a>
-          <a href="#modules">Modules</a>
-          <a href="#faq">FAQ</a>
+          {minimal ? (
+            <a href="/#packages">Packages</a>
+          ) : (
+            <>
+              <a href="#explore">Home</a>
+              <a href="#why">Services</a>
+              <a href="#packages">Packages</a>
+              <a href="#modules">Modules</a>
+              <a href="#faq">FAQ</a>
+            </>
+          )}
         </nav>
-        <a class="btn" href="#packages">Get Started</a>
+        <a class="btn" href={minimal ? '/' : '#packages'}>{minimal ? 'Home' : 'Get Started'}</a>
       </div>
     </header>
     <main id="main">
       <slot />
     </main>
+    {!minimal && (
     <footer class="foot">
       <div class="wave" aria-hidden="true">
         <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
@@ -259,6 +268,7 @@ const jsonLd = [
         </div>
       </div>
     </footer>
+    )}
 
     <script>
       import '../scripts/motion';

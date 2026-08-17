@@ -6,3 +6,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_PADDLE_ENV?: string;
   readonly SITE?: string;
 }
+
+interface Window {
+  careflowPreferLocalHttp?: (url: string) => string;
+}

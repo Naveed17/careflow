@@ -35,8 +35,8 @@ export const ADDON_FEATURES = [
     price: 20,
   },
   { key: 'pharmacy', label: 'Pharmacy / Inventory', hint: 'Stock, batches & pharmacist desk', price: 30 },
-  { key: 'whatsapp', label: 'WhatsApp', hint: 'Patient messaging & document send', price: 20 },
-  { key: 'ai', label: 'AI Assist', hint: 'History summarize & AI settings', price: 15 },
+  { key: 'whatsapp', label: 'WhatsApp Cloud API', hint: 'In-app send, documents & campaigns (WhatsApp Web is always free)', price: 20 },
+  { key: 'ai', label: 'AI Assist', hint: 'History summarize, Rx draft & per-clinic Groq Connect', price: 15 },
 ] as const;
 
 export function licenseApiBase() {

@@ -24,6 +24,37 @@ const enabled = Boolean(token) && !isSuccessPage;
           return;
         }
 
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bootPaddle);
+          return;
+        }
+
+        var host = (location.hostname || '').toLowerCase();
+        var localHost = host === 'localhost' || host === '127.0.0.1';
+        var localSandbox = env === 'sandbox' && localHost;
+
+        // Paddle dashboard forces https on the default payment link.
+        // Local Astro is http://localhost:4321 — bounce only on localhost sandbox.
+        if (localSandbox && location.protocol === 'https:') {
+          location.replace(
+            'http://' + location.host + location.pathname + location.search + location.hash,
+          );
+          return;
+        }
+
+        function preferLocalHttp(url) {
+          if (!localSandbox || !url) return url;
+          try {
+            var u = new URL(url, location.origin);
+            var h = u.hostname.toLowerCase();
+            if ((h === 'localhost' || h === '127.0.0.1') && u.protocol === 'https:') {
+              u.protocol = 'http:';
+              return u.toString();
+            }
+          } catch (e) {}
+          return url;
+        }
+
         var txn = new URLSearchParams(window.location.search).get('_ptxn') || '';
         if (txn) {
           try {
@@ -37,17 +68,23 @@ const enabled = Boolean(token) && !isSuccessPage;
           return base + (base.indexOf('?') >= 0 ? '&' : '?') + '_ptxn=' + encodeURIComponent(id);
         }
 
+        var checkoutSettings = {
+          displayMode: 'overlay',
+          theme: 'light',
+        };
+        // Do not give Paddle a successUrl on local HTTP — it upgrades it to https://localhost
+        // and the browser then fails SSL. JS eventCallback redirects to http:// instead.
+        if (!localSandbox) {
+          checkoutSettings.successUrl = successWithTxn(txn);
+        }
+
         if (env === 'sandbox') {
           Paddle.Environment.set('sandbox');
         }
         Paddle.Initialize({
           token: token,
           checkout: {
-            settings: {
-              displayMode: 'overlay',
-              theme: 'light',
-              successUrl: successWithTxn(txn),
-            },
+            settings: checkoutSettings,
           },
           eventCallback: function (event) {
             if (!event || event.name !== 'checkout.completed') return;
@@ -56,9 +93,10 @@ const enabled = Boolean(token) && !isSuccessPage;
             try {
               sessionStorage.setItem('careflow_ptxn', id);
             } catch (e) {}
-            window.location.href = successWithTxn(id);
+            window.location.href = preferLocalHttp(successWithTxn(id));
           },
         });
+        window.careflowPreferLocalHttp = preferLocalHttp;
       })();
     </script>
   </>

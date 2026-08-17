@@ -71,7 +71,8 @@ const apiBase = licenseApiBase();
         <input name="whatsappNumber" required minlength="10" placeholder="WhatsApp" autocomplete="tel" />
         <p class="cf-pkg__err" id="pkg-err" hidden></p>
         <button type="submit" class="cf-pkg__buy" id="pkg-buy">
-          Purchase &amp; get license — $<span id="pkg-btn-price">{BASE_PRICE_USD}</span>
+          <span class="cf-spin cf-spin--btn" id="pkg-buy-spin" hidden></span>
+          <span id="pkg-buy-text">Purchase &amp; get license — $<span id="pkg-btn-price">{BASE_PRICE_USD}</span></span>
         </button>
       </form>
 
@@ -83,10 +84,11 @@ const apiBase = licenseApiBase();
 
 <script define:vars={{ apiBase, BASE_PRICE_USD, FULL_PRICE_USD }}>
   const priceEl = document.getElementById('pkg-price');
-  const btnPrice = document.getElementById('pkg-btn-price');
   const form = document.getElementById('pkg-form');
   const err = document.getElementById('pkg-err');
   const buy = document.getElementById('pkg-buy');
+  const buyText = document.getElementById('pkg-buy-text');
+  const buySpin = document.getElementById('pkg-buy-spin');
   const fullBtn = document.getElementById('pkg-full');
   const boxes = () => Array.from(document.querySelectorAll('[data-addon]'));
 
@@ -99,8 +101,40 @@ const apiBase = licenseApiBase();
     });
     const total = all ? FULL_PRICE_USD : BASE_PRICE_USD + addons;
     if (priceEl) priceEl.textContent = String(total);
-    if (btnPrice) btnPrice.textContent = String(total);
+    const priceBtn = document.getElementById('pkg-btn-price');
+    if (priceBtn) priceBtn.textContent = String(total);
     return { total };
+  }
+
+  function setBusy(on, message) {
+    if (buy) buy.disabled = on;
+    if (buySpin) buySpin.hidden = !on;
+    if (on) {
+      if (buyText) buyText.textContent = message || 'Please wait…';
+    } else {
+      const { total } = calc();
+      if (buyText) buyText.innerHTML = 'Purchase &amp; get license — $' + total;
+    }
+  }
+
+  function preferLocalHttp(url) {
+    if (typeof window.careflowPreferLocalHttp === 'function') {
+      return window.careflowPreferLocalHttp(url);
+    }
+    const here = location.hostname.toLowerCase();
+    const local = here === 'localhost' || here === '127.0.0.1';
+    if (!local || !url) return url;
+    try {
+      const u = new URL(url, location.origin);
+      const host = u.hostname.toLowerCase();
+      if ((host === 'localhost' || host === '127.0.0.1') && u.protocol === 'https:') {
+        u.protocol = 'http:';
+        return u.toString();
+      }
+    } catch {
+      /* keep original */
+    }
+    return url;
   }
 
   boxes().forEach((el) => el.addEventListener('change', calc));
@@ -131,8 +165,7 @@ const apiBase = licenseApiBase();
       addons[el.dataset.addon] = el.checked;
     });
 
-    buy.disabled = true;
-    buy.textContent = 'Redirecting to secure checkout...';
+    setBusy(true, 'Redirecting to secure checkout...');
     try {
       const res = await fetch(apiBase + '/api/billing/checkout', {
         method: 'POST',
@@ -143,13 +176,11 @@ const apiBase = licenseApiBase();
       if (!res.ok) throw new Error(json?.message || 'Checkout failed');
       const url = json?.data?.url;
       if (!url) throw new Error('No checkout URL returned');
-      window.location.href = url;
+      window.location.href = preferLocalHttp(url);
     } catch (ex) {
       err.textContent = (ex && ex.message) || 'Could not start checkout. Is the license server running?';
       err.hidden = false;
-      buy.disabled = false;
-      const { total } = calc();
-      buy.innerHTML = 'Purchase &amp; get license — $' + total;
+      setBusy(false);
     }
   });
 </script>
