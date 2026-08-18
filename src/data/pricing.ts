@@ -3,6 +3,8 @@ export const DOWNLOAD_URL =
 
 export const BASE_PRICE_USD = 100;
 export const FULL_PRICE_USD = 300;
+export const ONLINE_DB_ANNUAL_USD = 100;
+export const WHATSAPP_AI_MONTHLY_USD = 30;
 
 export const BASE_FEATURES = [
   {
@@ -35,8 +37,20 @@ export const ADDON_FEATURES = [
     price: 20,
   },
   { key: 'pharmacy', label: 'Pharmacy / Inventory', hint: 'Stock, batches & pharmacist desk', price: 30 },
-  { key: 'whatsapp', label: 'WhatsApp Cloud API', hint: 'In-app send, documents & campaigns (WhatsApp Web is always free)', price: 20 },
-  { key: 'ai', label: 'AI Assist', hint: 'History summarize, Rx draft & per-clinic Groq Connect', price: 15 },
+  {
+    key: 'whatsapp',
+    label: 'WhatsApp Cloud API',
+    hint: 'In-app send, documents & campaigns (WhatsApp Web is always free). Hosted usage is $30/mo with AI.',
+    price: 20,
+    hosted: true,
+  },
+  {
+    key: 'ai',
+    label: 'AI Assist',
+    hint: 'History summarize, Rx draft & per-clinic Groq Connect. Hosted usage is $30/mo with WhatsApp.',
+    price: 15,
+    hosted: true,
+  },
 ] as const;
 
 export function licenseApiBase() {

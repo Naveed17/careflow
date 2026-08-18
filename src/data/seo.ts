@@ -65,4 +65,9 @@ export const faqs = [
     answer:
       'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Inventory, Lab, Statistics, Doctors & Schedule, and staff accounts. Receptionist users are included in the core package; extra admin accounts and staff delete are an optional add-on.',
   },
+  {
+    question: 'What does online database, WhatsApp and AI cost?',
+    answer:
+      'The Windows license is a one-time lifetime purchase ($100 core, $300 full modules). If you choose hosted online database, that is $100 per year. WhatsApp Cloud API or AI Assist adds $30 per month for hosted usage — one monthly fee even if both are on.',
+  },
 ];

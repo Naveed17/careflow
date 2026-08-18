@@ -5,6 +5,8 @@ import {
   BASE_PRICE_USD,
   DOWNLOAD_URL,
   FULL_PRICE_USD,
+  ONLINE_DB_ANNUAL_USD,
+  WHATSAPP_AI_MONTHLY_USD,
   licenseApiBase,
 } from '../data/pricing';
 
@@ -16,7 +18,9 @@ const apiBase = licenseApiBase();
     <h2>Build your lifetime package</h2>
     <p>
       Doctor + Reception starts at <strong>${BASE_PRICE_USD}</strong>. Add modules as you need —
-      full access is <strong>${FULL_PRICE_USD}</strong>. Lifetime · no expiry.
+      full access is <strong>${FULL_PRICE_USD}</strong>. Online database is
+      <strong>${ONLINE_DB_ANNUAL_USD}/year</strong>. WhatsApp or AI hosted usage is
+      <strong>${WHATSAPP_AI_MONTHLY_USD}/month</strong>. Lifetime license · no expiry.
     </p>
   </div>
 
@@ -50,20 +54,47 @@ const apiBase = licenseApiBase();
                 <strong>{f.label}</strong>
                 <small>{f.hint}</small>
               </span>
-              <span class="cf-pkg__price">+${f.price}</span>
+              <span class="cf-pkg__price">
+                <span>+${f.price}</span>
+                { 'hosted' in f && f.hosted ? <small>+${WHATSAPP_AI_MONTHLY_USD}/mo</small> : null}
+              </span>
             </label>
           ))
         }
       </div>
+
+      <div class="cf-pkg__divider">
+        <span>Hosted services</span>
+      </div>
+
+      <label class="cf-pkg__item">
+        <input type="checkbox" id="pkg-online-db" />
+        <span class="cf-pkg__check" aria-hidden="true"></span>
+        <span class="cf-pkg__meta">
+          <strong>Online database</strong>
+          <small>Cloud Postgres for your clinic — billed ${ONLINE_DB_ANNUAL_USD}/year. Off keeps local SQLite.</small>
+        </span>
+        <span class="cf-pkg__price">+${ONLINE_DB_ANNUAL_USD}/yr</span>
+      </label>
     </div>
 
     <aside class="cf-pkg__checkout">
       <p class="cf-pkg__label">Checkout</p>
       <div class="cf-pkg__total">
-        <span>Total</span>
+        <span>Lifetime</span>
         <strong>$<span id="pkg-price">{BASE_PRICE_USD}</span></strong>
       </div>
-      <p class="cf-pkg__once">USD · lifetime · one-time</p>
+      <p class="cf-pkg__once">USD · one-time Paddle checkout</p>
+      <ul class="cf-pkg__recurring" id="pkg-recurring">
+        <li id="pkg-recurring-db" hidden>
+          <span>Online DB</span>
+          <strong>${ONLINE_DB_ANNUAL_USD}/yr</strong>
+        </li>
+        <li id="pkg-recurring-hosted" hidden>
+          <span>WhatsApp + AI</span>
+          <strong>${WHATSAPP_AI_MONTHLY_USD}/mo</strong>
+        </li>
+      </ul>
 
       <form id="pkg-form" class="cf-pkg__form" novalidate>
         <input name="userName" required minlength="2" placeholder="Full name" autocomplete="name" />
@@ -72,17 +103,17 @@ const apiBase = licenseApiBase();
         <p class="cf-pkg__err" id="pkg-err" hidden></p>
         <button type="submit" class="cf-pkg__buy" id="pkg-buy">
           <span class="cf-spin cf-spin--btn" id="pkg-buy-spin" hidden></span>
-          <span id="pkg-buy-text">Purchase &amp; get license — $<span id="pkg-btn-price">{BASE_PRICE_USD}</span></span>
+          <span id="pkg-buy-text">Purchase &amp; get license — ${BASE_PRICE_USD}</span>
         </button>
       </form>
 
       <a class="cf-pkg__dl" href={DOWNLOAD_URL}>Download CareFlow-Setup.exe</a>
-      <p class="cf-pkg__fine">Paddle · Pakistan + global cards · auto license key</p>
+      <p class="cf-pkg__fine">Paddle charges the lifetime license today. Online DB and WhatsApp/AI hosted fees are billed separately.</p>
     </aside>
   </div>
 </section>
 
-<script define:vars={{ apiBase, BASE_PRICE_USD, FULL_PRICE_USD }}>
+<script define:vars={{ apiBase, BASE_PRICE_USD, FULL_PRICE_USD, ONLINE_DB_ANNUAL_USD, WHATSAPP_AI_MONTHLY_USD }}>
   const priceEl = document.getElementById('pkg-price');
   const form = document.getElementById('pkg-form');
   const err = document.getElementById('pkg-err');
@@ -90,7 +121,23 @@ const apiBase = licenseApiBase();
   const buyText = document.getElementById('pkg-buy-text');
   const buySpin = document.getElementById('pkg-buy-spin');
   const fullBtn = document.getElementById('pkg-full');
+  const onlineDbEl = document.getElementById('pkg-online-db');
+  const recDb = document.getElementById('pkg-recurring-db');
+  const recHosted = document.getElementById('pkg-recurring-hosted');
   const boxes = () => Array.from(document.querySelectorAll('[data-addon]'));
+
+  function hostedOn() {
+    return boxes().some(
+      (el) => (el.dataset.addon === 'whatsapp' || el.dataset.addon === 'ai') && el.checked,
+    );
+  }
+
+  function formatCost(total, yearly, monthly) {
+    const parts = ['$' + total];
+    if (yearly) parts.push('$' + yearly + '/yr');
+    if (monthly) parts.push('$' + monthly + '/mo');
+    return parts.join(' + ');
+  }
 
   function calc() {
     let addons = 0;
@@ -100,10 +147,15 @@ const apiBase = licenseApiBase();
       else all = false;
     });
     const total = all ? FULL_PRICE_USD : BASE_PRICE_USD + addons;
+    const yearly = onlineDbEl && onlineDbEl.checked ? ONLINE_DB_ANNUAL_USD : 0;
+    const monthly = hostedOn() ? WHATSAPP_AI_MONTHLY_USD : 0;
     if (priceEl) priceEl.textContent = String(total);
-    const priceBtn = document.getElementById('pkg-btn-price');
-    if (priceBtn) priceBtn.textContent = String(total);
-    return { total };
+    if (recDb) recDb.hidden = !yearly;
+    if (recHosted) recHosted.hidden = !monthly;
+    if (buyText && !buy?.disabled) {
+      buyText.innerHTML = 'Purchase &amp; get license — ' + formatCost(total, yearly, monthly);
+    }
+    return { total, yearly, monthly, onlineDatabase: Boolean(onlineDbEl && onlineDbEl.checked) };
   }
 
   function setBusy(on, message) {
@@ -112,8 +164,7 @@ const apiBase = licenseApiBase();
     if (on) {
       if (buyText) buyText.textContent = message || 'Please wait…';
     } else {
-      const { total } = calc();
-      if (buyText) buyText.innerHTML = 'Purchase &amp; get license — $' + total;
+      calc();
     }
   }
 
@@ -138,6 +189,7 @@ const apiBase = licenseApiBase();
   }
 
   boxes().forEach((el) => el.addEventListener('change', calc));
+  onlineDbEl?.addEventListener('change', calc);
   fullBtn?.addEventListener('click', () => {
     boxes().forEach((el) => {
       el.checked = true;
@@ -164,13 +216,14 @@ const apiBase = licenseApiBase();
     boxes().forEach((el) => {
       addons[el.dataset.addon] = el.checked;
     });
+    const { onlineDatabase } = calc();
 
     setBusy(true, 'Redirecting to secure checkout...');
     try {
       const res = await fetch(apiBase + '/api/billing/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userName, email, whatsappNumber, addons }),
+        body: JSON.stringify({ userName, email, whatsappNumber, addons, onlineDatabase }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.message || 'Checkout failed');
