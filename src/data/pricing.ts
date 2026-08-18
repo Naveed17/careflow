@@ -5,6 +5,8 @@ export const BASE_PRICE_USD = 100;
 export const FULL_PRICE_USD = 300;
 export const ONLINE_DB_ANNUAL_USD = 100;
 export const WHATSAPP_AI_MONTHLY_USD = 30;
+export const ONLINE_DB_PERIOD_YEARS = 1;
+export const WHATSAPP_AI_PERIOD_MONTHS = 1;
 
 export const BASE_FEATURES = [
   {
@@ -40,14 +42,14 @@ export const ADDON_FEATURES = [
   {
     key: 'whatsapp',
     label: 'WhatsApp Cloud API',
-    hint: 'In-app send, documents & campaigns (WhatsApp Web is always free). Hosted usage is $30/mo with AI.',
+    hint: 'In-app send, documents & campaigns (WhatsApp Web is always free). Hosted usage is $30/mo with AI, then auto-off after 1 month unless you renew.',
     price: 20,
     hosted: true,
   },
   {
     key: 'ai',
     label: 'AI Assist',
-    hint: 'History summarize, Rx draft & per-clinic Groq Connect. Hosted usage is $30/mo with WhatsApp.',
+    hint: 'History summarize, Rx draft & per-clinic Groq Connect. Hosted usage is $30/mo with WhatsApp, then auto-off after 1 month unless you renew.',
     price: 15,
     hosted: true,
   },

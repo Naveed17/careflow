@@ -7,6 +7,8 @@ import {
   FULL_PRICE_USD,
   ONLINE_DB_ANNUAL_USD,
   WHATSAPP_AI_MONTHLY_USD,
+  ONLINE_DB_PERIOD_YEARS,
+  WHATSAPP_AI_PERIOD_MONTHS,
   licenseApiBase,
 } from '../data/pricing';
 
@@ -19,8 +21,9 @@ const apiBase = licenseApiBase();
     <p>
       Doctor + Reception starts at <strong>${BASE_PRICE_USD}</strong>. Add modules as you need —
       full access is <strong>${FULL_PRICE_USD}</strong>. Online database is
-      <strong>${ONLINE_DB_ANNUAL_USD}/year</strong>. WhatsApp or AI hosted usage is
-      <strong>${WHATSAPP_AI_MONTHLY_USD}/month</strong>. Lifetime license · no expiry.
+      <strong>${ONLINE_DB_ANNUAL_USD}/year</strong> and auto-off after {ONLINE_DB_PERIOD_YEARS} year.
+      WhatsApp or AI hosted usage is <strong>${WHATSAPP_AI_MONTHLY_USD}/month</strong> and auto-off
+      after {WHATSAPP_AI_PERIOD_MONTHS} month. Lifetime Windows license never expires.
     </p>
   </div>
 
@@ -72,7 +75,7 @@ const apiBase = licenseApiBase();
         <span class="cf-pkg__check" aria-hidden="true"></span>
         <span class="cf-pkg__meta">
           <strong>Online database</strong>
-          <small>Cloud Postgres for your clinic — billed ${ONLINE_DB_ANNUAL_USD}/year. Off keeps local SQLite.</small>
+          <small>Cloud Postgres for your clinic — billed ${ONLINE_DB_ANNUAL_USD}/year, then auto-off. Off keeps local SQLite.</small>
         </span>
         <span class="cf-pkg__price">+${ONLINE_DB_ANNUAL_USD}/yr</span>
       </label>
@@ -108,7 +111,10 @@ const apiBase = licenseApiBase();
       </form>
 
       <a class="cf-pkg__dl" href={DOWNLOAD_URL}>Download CareFlow-Setup.exe</a>
-      <p class="cf-pkg__fine">Paddle charges the lifetime license today. Online DB and WhatsApp/AI hosted fees are billed separately.</p>
+      <p class="cf-pkg__fine">
+        Paddle charges the lifetime license today. Online DB and WhatsApp/AI hosted fees start from the day they are enabled, then auto-off.
+        <a href="/renew">Renew hosted services</a>
+      </p>
     </aside>
   </div>
 </section>

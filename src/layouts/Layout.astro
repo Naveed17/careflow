@@ -210,18 +210,21 @@ const jsonLd = [
         </a>
         <nav aria-label="Primary">
           {minimal ? (
-            <a href="/#packages">Packages</a>
+            <>
+              <a href="/#packages">Packages</a>
+              <a href="/renew">Renew</a>
+            </>
           ) : (
             <>
-              <a href="#explore">Home</a>
-              <a href="#why">Services</a>
-              <a href="#packages">Packages</a>
-              <a href="#modules">Modules</a>
-              <a href="#faq">FAQ</a>
+              <a href="/#explore">Home</a>
+              <a href="/#packages">Packages</a>
+              <a href="/renew">Renew</a>
+              <a href="/#modules">Modules</a>
+              <a href="/#faq">FAQ</a>
             </>
           )}
         </nav>
-        <a class="btn" href={minimal ? '/' : '#packages'}>{minimal ? 'Home' : 'Get Started'}</a>
+        <a class="btn" href={minimal ? '/' : '/#packages'}>{minimal ? 'Home' : 'Get Started'}</a>
       </div>
     </header>
     <main id="main">
@@ -250,17 +253,18 @@ const jsonLd = [
             <div>
               <h3>Product</h3>
               <nav class="foot-nav" aria-label="Product">
-                <a href="#packages">Packages</a>
-                <a href="#modules">Modules</a>
-                <a href="#download">Download</a>
+                <a href="/#packages">Packages</a>
+                <a href="/renew">Renew</a>
+                <a href="/#modules">Modules</a>
+                <a href="/#download">Download</a>
               </nav>
             </div>
             <div>
               <h3>Company</h3>
               <nav class="foot-nav" aria-label="Company">
-                <a href="#benefits">Why CareFlow</a>
-                <a href="#testimonials">Customers</a>
-                <a href="#faq">FAQ</a>
+                <a href="/#benefits">Why CareFlow</a>
+                <a href="/#faq">FAQ</a>
+                <a href="/renew">Renew hosted</a>
               </nav>
             </div>
           </div>

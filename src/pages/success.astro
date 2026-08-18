@@ -24,9 +24,9 @@ const apiBase = licenseApiBase();
     </div>
 
     <div class="card" id="result" hidden>
-      <p class="eyebrow">Lifetime license</p>
-      <h1>You&apos;re all set</h1>
-      <p class="lead">Your lifetime license is ready. Copy the key, then download and activate CareFlow.</p>
+      <p class="eyebrow" id="result-eyebrow">Lifetime license</p>
+      <h1 id="result-title">You&apos;re all set</h1>
+      <p class="lead" id="result-lead">Your lifetime license is ready. Copy the key, then download and activate CareFlow.</p>
 
       <div class="keybox" id="keybox">
         <span>Your license key</span>
@@ -35,12 +35,14 @@ const apiBase = licenseApiBase();
           <button type="button" id="copy">Copy key</button>
         </div>
       </div>
+      <p class="hint" id="renew-hint" hidden></p>
 
       <div class="actions">
         <a class="primary" href={DOWNLOAD_URL}>Download CareFlow Setup.exe</a>
+        <a class="ghost" href="/renew">Renew hosted services</a>
         <a class="ghost" href="/#packages">Back to packages</a>
       </div>
-      <p class="hint">Keep this key safe — it is not emailed.</p>
+      <p class="hint" id="keep-hint">Keep this key safe — it is not emailed.</p>
     </div>
 
     <div class="card error" id="not-found" hidden>
@@ -50,8 +52,8 @@ const apiBase = licenseApiBase();
         This page only opens after a completed Paddle checkout with a valid transaction id.
       </p>
       <div class="actions">
-        <a class="primary" href="/#packages">Back to packages</a>
-        <a class="ghost" href="/">Go home</a>
+        <a class="ghost" href="/renew">Renew hosted services</a>
+        <a class="ghost" href="/#packages">Back to packages</a>
       </div>
     </div>
   </section>
@@ -90,13 +92,47 @@ const apiBase = licenseApiBase();
       document.title = 'Transaction ID not found — CareFlow';
     }
 
-    function showKey(key) {
+    const resultEyebrow = document.getElementById('result-eyebrow');
+    const resultTitle = document.getElementById('result-title');
+    const resultLead = document.getElementById('result-lead');
+    const renewHint = document.getElementById('renew-hint');
+    const keepHint = document.getElementById('keep-hint');
+
+    function fmtDate(value) {
+      if (!value) return null;
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return null;
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function applyRenewCopy(data) {
+      const isRenew = data?.kind === 'renew' || params.get('renew') === '1';
+      if (!isRenew) return;
+      if (resultEyebrow) resultEyebrow.textContent = 'Hosted renewal';
+      if (resultTitle) resultTitle.textContent = 'Services are back on';
+      if (resultLead) {
+        resultLead.textContent =
+          'Payment confirmed. Restart CareFlow (or sign in again) so WhatsApp, AI and online DB pick up the new dates.';
+      }
+      const bits = [];
+      if (data?.onlineDatabaseExpiresAt) bits.push('Online DB until ' + fmtDate(data.onlineDatabaseExpiresAt));
+      if (data?.whatsappExpiresAt) bits.push('WhatsApp until ' + fmtDate(data.whatsappExpiresAt));
+      if (data?.aiExpiresAt) bits.push('AI until ' + fmtDate(data.aiExpiresAt));
+      if (renewHint) {
+        renewHint.hidden = bits.length === 0;
+        renewHint.textContent = bits.join(' · ');
+      }
+      if (keepHint) keepHint.textContent = 'Your lifetime Windows license key did not change.';
+    }
+
+    function showKey(key, data) {
       if (!key) return;
       hideLoading();
       if (notFound) notFound.hidden = true;
       if (result) result.hidden = false;
       if (barFill) barFill.style.width = '100%';
       keyEl.textContent = key;
+      applyRenewCopy(data || { kind: params.get('renew') === '1' ? 'renew' : 'purchase' });
       try {
         sessionStorage.removeItem('careflow_ptxn');
       } catch {
@@ -146,7 +182,7 @@ const apiBase = licenseApiBase();
           }
           const json = await res.json().catch(() => null);
           if (json?.data?.paid && json.data.licenseKey) {
-            showKey(json.data.licenseKey);
+            showKey(json.data.licenseKey, json.data);
             return true;
           }
         } catch {
@@ -162,6 +198,13 @@ const apiBase = licenseApiBase();
     }
 
     (async () => {
+      const mockKey = String(params.get('key') || '')
+        .trim()
+        .toUpperCase();
+      if (params.get('mock') === '1' && mockKey) {
+        showKey(mockKey, { kind: params.get('renew') === '1' ? 'renew' : 'purchase' });
+        return;
+      }
       if (!rawTxn) {
         showNotFound(
           'No transaction id in the URL. Open this page only after checkout, e.g. /success?_ptxn=txn_…',

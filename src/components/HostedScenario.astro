@@ -1,0 +1,148 @@
+---
+import {
+  ONLINE_DB_ANNUAL_USD,
+  ONLINE_DB_PERIOD_YEARS,
+  WHATSAPP_AI_MONTHLY_USD,
+  WHATSAPP_AI_PERIOD_MONTHS,
+} from '../data/pricing';
+
+const steps = [
+  {
+    n: '01',
+    title: 'Enable — clock starts that day',
+    body: `Turn on Online DB, WhatsApp or AI with your license. Online DB stays on for ${ONLINE_DB_PERIOD_YEARS} year ($${ONLINE_DB_ANNUAL_USD}). WhatsApp and/or AI stay on for ${WHATSAPP_AI_PERIOD_MONTHS} month ($${WHATSAPP_AI_MONTHLY_USD}, one fee).`,
+  },
+  {
+    n: '02',
+    title: 'Period ends — auto-off',
+    body: 'When the date is reached, that hosted service turns itself off. Your lifetime Windows license, patients and local SQLite stay. Only the expired hosted add-on stops.',
+  },
+  {
+    n: '03',
+    title: 'Renew here — it turns back on',
+    body: 'Open Renew, enter your license key, pick Online DB and/or WhatsApp / AI, pay with Paddle. Payment day starts a new period and the features enable again. Paying early adds another period on top.',
+  },
+];
+---
+
+<section class="section hosted" id="renew-hosted">
+  <div class="head" data-reveal>
+    <h2>WhatsApp, AI &amp; online DB — how renewal works</h2>
+    <p>
+      The Windows app is lifetime. Hosted services are not — they auto-off, then you switch them
+      back on from this website.
+    </p>
+  </div>
+
+  <ol class="steps">
+    {
+      steps.map((s, i) => (
+        <li data-reveal data-delay={String(i * 70)}>
+          <span class="n">{s.n}</span>
+          <div>
+            <strong>{s.title}</strong>
+            <p>{s.body}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+
+  <p class="cta" data-reveal>
+    <a href="/renew">Renew Online DB, WhatsApp or AI</a>
+  </p>
+</section>
+
+<style>
+  .hosted {
+    padding-top: 24px;
+    padding-bottom: 48px;
+  }
+
+  .head {
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto 28px;
+  }
+
+  .head h2 {
+    margin: 0 0 8px;
+    font-size: clamp(26px, 3.2vw, 36px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .steps {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  li {
+    background: #fff;
+    border: 1px solid rgba(15, 42, 26, 0.07);
+    border-radius: 20px;
+    padding: 20px 18px;
+    display: grid;
+    gap: 10px;
+    box-shadow: 0 10px 28px rgba(15, 42, 26, 0.04);
+  }
+
+  .n {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: #0f2a1a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+  }
+
+  strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  li p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .cta {
+    text-align: center;
+    margin: 22px 0 0;
+  }
+
+  .cta a {
+    display: inline-flex;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: #0f2a1a;
+    color: #fff;
+  }
+
+  @media (max-width: 800px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -786,6 +786,11 @@ img {
   line-height: 1.45;
 }
 
+.cf-pkg__fine a {
+  color: var(--green-deep);
+  font-weight: 800;
+}
+
 /* ---------- Footer ---------- */
 .foot {
   position: relative;

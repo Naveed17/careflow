@@ -68,6 +68,11 @@ export const faqs = [
   {
     question: 'What does online database, WhatsApp and AI cost?',
     answer:
-      'The Windows license is a one-time lifetime purchase ($100 core, $300 full modules). If you choose hosted online database, that is $100 per year. WhatsApp Cloud API or AI Assist adds $30 per month for hosted usage — one monthly fee even if both are on.',
+      'The Windows license is a one-time lifetime purchase ($100 core, $300 full modules). Hosted online database is $100 per year and auto-off after 1 year. WhatsApp Cloud API or AI Assist adds $30 per month (one fee even if both are on) and auto-off after 1 month. Renew on careflow.app/renew with your license key — payment turns the service back on from that day.',
+  },
+  {
+    question: 'How do I renew WhatsApp, AI or online database after they auto-off?',
+    answer:
+      'Open careflow.app/renew, enter your lifetime license key, choose Online DB ($100/year) and/or WhatsApp / AI ($30/month), and pay with Paddle. That day starts a new period and the features turn back on in CareFlow. Paying early adds another period onto the remaining days.',
   },
 ];

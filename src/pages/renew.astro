@@ -1,0 +1,379 @@
+---
+import Layout from '../layouts/Layout.astro';
+import {
+  ONLINE_DB_ANNUAL_USD,
+  ONLINE_DB_PERIOD_YEARS,
+  WHATSAPP_AI_MONTHLY_USD,
+  WHATSAPP_AI_PERIOD_MONTHS,
+  licenseApiBase,
+} from '../data/pricing';
+
+const apiBase = licenseApiBase();
+---
+
+<Layout
+  title="Renew WhatsApp, AI & online database — CareFlow"
+  description="Renew CareFlow hosted Online DB ($100/year) and WhatsApp / AI ($30/month) after auto-off. Enter your lifetime license key and pay with Paddle."
+  keywords={['CareFlow renew', 'clinic WhatsApp', 'clinic AI', 'online database']}
+  canonicalPath="/renew"
+>
+  <section class="wrap">
+    <div class="head">
+      <p class="eyebrow">Hosted services</p>
+      <h1>Renew WhatsApp, AI or online DB</h1>
+      <p class="lead">
+        Lifetime Windows license stays on. These hosted extras auto-off: Online DB after
+        {ONLINE_DB_PERIOD_YEARS} year (${ONLINE_DB_ANNUAL_USD}), WhatsApp / AI after
+        {WHATSAPP_AI_PERIOD_MONTHS} month (${WHATSAPP_AI_MONTHLY_USD}). Pay here to turn them back on
+        from today.
+      </p>
+    </div>
+
+    <div class="grid">
+      <ol class="scene">
+        <li>
+          <strong>1. Look up your key</strong>
+          <span>Same CLINIC-XXXX-XXXX key you activated in the Windows app.</span>
+        </li>
+        <li>
+          <strong>2. Pick what to switch on</strong>
+          <span>Online DB, WhatsApp Cloud API, and/or AI Assist. WhatsApp + AI share one $30 fee.</span>
+        </li>
+        <li>
+          <strong>3. Pay — they enable again</strong>
+          <span>Paddle checkout. That day starts a new period. Paying early stacks onto remaining days.</span>
+        </li>
+      </ol>
+
+      <aside class="panel">
+        <form id="lookup-form" class="cf-pkg__form">
+          <p class="cf-pkg__label">License key</p>
+          <input
+            name="key"
+            id="renew-key"
+            required
+            minlength="14"
+            placeholder="CLINIC-XXXX-XXXX"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <p class="cf-pkg__err" id="lookup-err" hidden></p>
+          <button type="submit" class="cf-pkg__buy" id="lookup-btn">Find license</button>
+        </form>
+
+        <div id="renew-box" hidden>
+          <p class="clinic" id="clinic-name"></p>
+          <ul class="status" id="status-list"></ul>
+
+          <form id="renew-form" class="cf-pkg__form">
+            <label class="cf-pkg__item">
+              <input type="checkbox" id="opt-db" />
+              <span class="cf-pkg__check" aria-hidden="true"></span>
+              <span class="cf-pkg__meta">
+                <strong>Online database</strong>
+                <small>Cloud clinic data · ${ONLINE_DB_ANNUAL_USD} for {ONLINE_DB_PERIOD_YEARS} year</small>
+              </span>
+              <span class="cf-pkg__price">+${ONLINE_DB_ANNUAL_USD}/yr</span>
+            </label>
+            <label class="cf-pkg__item">
+              <input type="checkbox" id="opt-wa" />
+              <span class="cf-pkg__check" aria-hidden="true"></span>
+              <span class="cf-pkg__meta">
+                <strong>WhatsApp Cloud API</strong>
+                <small>In-app send · ${WHATSAPP_AI_MONTHLY_USD}/mo with AI</small>
+              </span>
+              <span class="cf-pkg__price">+${WHATSAPP_AI_MONTHLY_USD}/mo</span>
+            </label>
+            <label class="cf-pkg__item">
+              <input type="checkbox" id="opt-ai" />
+              <span class="cf-pkg__check" aria-hidden="true"></span>
+              <span class="cf-pkg__meta">
+                <strong>AI Assist</strong>
+                <small>Summarize &amp; Rx draft · same ${WHATSAPP_AI_MONTHLY_USD}/mo fee</small>
+              </span>
+              <span class="cf-pkg__price">+${WHATSAPP_AI_MONTHLY_USD}/mo</span>
+            </label>
+
+            <input name="email" id="renew-email" type="email" required placeholder="Receipt email" autocomplete="email" />
+            <div class="cf-pkg__total">
+              <span>To pay</span>
+              <strong>$<span id="renew-total">0</span></strong>
+            </div>
+            <p class="cf-pkg__err" id="renew-err" hidden></p>
+            <button type="submit" class="cf-pkg__buy" id="renew-btn" disabled>
+              <span class="cf-spin cf-spin--btn" id="renew-spin" hidden></span>
+              <span id="renew-text">Select a service to renew</span>
+            </button>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ apiBase, ONLINE_DB_ANNUAL_USD, WHATSAPP_AI_MONTHLY_USD }}>
+  const lookupForm = document.getElementById('lookup-form');
+  const lookupErr = document.getElementById('lookup-err');
+  const lookupBtn = document.getElementById('lookup-btn');
+  const keyEl = document.getElementById('renew-key');
+  const box = document.getElementById('renew-box');
+  const clinicName = document.getElementById('clinic-name');
+  const statusList = document.getElementById('status-list');
+  const optDb = document.getElementById('opt-db');
+  const optWa = document.getElementById('opt-wa');
+  const optAi = document.getElementById('opt-ai');
+  const totalEl = document.getElementById('renew-total');
+  const renewForm = document.getElementById('renew-form');
+  const renewErr = document.getElementById('renew-err');
+  const renewBtn = document.getElementById('renew-btn');
+  const renewText = document.getElementById('renew-text');
+  const renewSpin = document.getElementById('renew-spin');
+  const emailEl = document.getElementById('renew-email');
+
+  let licenseKey = '';
+
+  function preferLocalHttp(url) {
+    if (typeof window.careflowPreferLocalHttp === 'function') {
+      return window.careflowPreferLocalHttp(url);
+    }
+    return url;
+  }
+
+  function fmtDate(value) {
+    if (!value) return null;
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return null;
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  function line(on, expiry, offLabel, onLabel) {
+    if (on && expiry) return onLabel + ' until ' + fmtDate(expiry);
+    if (on) return onLabel;
+    return offLabel;
+  }
+
+  function calc() {
+    const yearly = optDb && optDb.checked ? ONLINE_DB_ANNUAL_USD : 0;
+    const monthly = (optWa && optWa.checked) || (optAi && optAi.checked) ? WHATSAPP_AI_MONTHLY_USD : 0;
+    const total = yearly + monthly;
+    if (totalEl) totalEl.textContent = String(total);
+    const parts = [];
+    if (yearly) parts.push('$' + yearly + '/yr');
+    if (monthly) parts.push('$' + monthly + '/mo');
+    if (renewBtn) renewBtn.disabled = total === 0;
+    if (renewText && !renewBtn?.disabled) {
+      renewText.textContent = total ? 'Pay & turn back on — ' + parts.join(' + ') : 'Select a service to renew';
+    } else if (renewText && renewBtn?.disabled) {
+      renewText.textContent = 'Select a service to renew';
+    }
+    return { total, onlineDatabase: Boolean(optDb && optDb.checked), whatsapp: Boolean(optWa && optWa.checked), ai: Boolean(optAi && optAi.checked) };
+  }
+
+  [optDb, optWa, optAi].forEach((el) => el?.addEventListener('change', calc));
+  calc();
+
+  lookupForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    lookupErr.hidden = true;
+    const key = String(keyEl?.value || '').trim().toUpperCase();
+    if (keyEl) keyEl.value = key;
+    if (!/^CLINIC(-[A-Z0-9]{4}){2,4}$/.test(key)) {
+      lookupErr.textContent = 'Use a key like CLINIC-XXXX-XXXX.';
+      lookupErr.hidden = false;
+      return;
+    }
+    lookupBtn.disabled = true;
+    lookupBtn.textContent = 'Looking up…';
+    try {
+      const res = await fetch(apiBase + '/api/billing/hosted-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key }),
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(json?.message || 'License not found');
+      const d = json.data;
+      licenseKey = d.key;
+      clinicName.textContent = d.userName ? d.userName + ' · ' + d.key : d.key;
+      statusList.innerHTML =
+        '<li>' +
+        line(d.onlineDatabase, d.onlineDatabaseExpiresAt, 'Online DB is off', 'Online DB on') +
+        '</li><li>' +
+        line(d.whatsapp, d.whatsappExpiresAt, 'WhatsApp Cloud is off', 'WhatsApp Cloud on') +
+        '</li><li>' +
+        line(d.ai, d.aiExpiresAt, 'AI Assist is off', 'AI Assist on') +
+        '</li>';
+      if (optDb) optDb.checked = !d.onlineDatabase;
+      if (optWa) optWa.checked = !d.whatsapp;
+      if (optAi) optAi.checked = !d.ai;
+      box.hidden = false;
+      calc();
+    } catch (ex) {
+      lookupErr.textContent = (ex && ex.message) || 'Could not reach the license server.';
+      lookupErr.hidden = false;
+      box.hidden = true;
+    } finally {
+      lookupBtn.disabled = false;
+      lookupBtn.textContent = 'Find license';
+    }
+  });
+
+  const qKey = new URLSearchParams(location.search).get('key');
+  if (qKey && keyEl) {
+    keyEl.value = qKey.toUpperCase();
+    lookupForm?.requestSubmit();
+  }
+
+  renewForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    renewErr.hidden = true;
+    const email = String(emailEl?.value || '').trim();
+    const sel = calc();
+    if (!licenseKey || !sel.total) return;
+    if (!email.includes('@')) {
+      renewErr.textContent = 'Enter a valid receipt email.';
+      renewErr.hidden = false;
+      return;
+    }
+    renewBtn.disabled = true;
+    if (renewSpin) renewSpin.hidden = false;
+    if (renewText) renewText.textContent = 'Redirecting to secure checkout…';
+    try {
+      const res = await fetch(apiBase + '/api/billing/renew', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          key: licenseKey,
+          email,
+          onlineDatabase: sel.onlineDatabase,
+          whatsapp: sel.whatsapp,
+          ai: sel.ai,
+        }),
+      });
+      const json = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(json?.message || 'Checkout failed');
+      const url = json?.data?.url;
+      if (!url) throw new Error('No checkout URL returned');
+      window.location.href = preferLocalHttp(url);
+    } catch (ex) {
+      renewErr.textContent = (ex && ex.message) || 'Could not start checkout.';
+      renewErr.hidden = false;
+      renewBtn.disabled = false;
+      if (renewSpin) renewSpin.hidden = true;
+      calc();
+    }
+  });
+</script>
+
+<style>
+  .wrap {
+    padding: 48px 20px 64px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .head {
+    max-width: 640px;
+    margin: 0 auto 32px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 8px;
+  }
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .lead {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.9fr);
+    gap: 22px;
+    align-items: start;
+  }
+
+  .scene {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  .scene li {
+    background: #fff;
+    border: 1px solid rgba(15, 42, 26, 0.07);
+    border-radius: 18px;
+    padding: 16px 18px;
+  }
+
+  .scene strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .scene span {
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .panel {
+    background: #fff;
+    border: 1px solid rgba(15, 42, 26, 0.08);
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 16px 40px rgba(15, 42, 26, 0.06);
+  }
+
+  .clinic {
+    font-size: 13px;
+    font-weight: 800;
+    margin: 18px 0 8px;
+  }
+
+  .status {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    font-size: 13px;
+    color: var(--muted);
+    display: grid;
+    gap: 4px;
+  }
+
+  .panel .cf-pkg__item {
+    margin-bottom: 8px;
+  }
+
+  .panel .cf-pkg__total {
+    margin: 12px 0 8px;
+  }
+
+  .panel .cf-pkg__total strong {
+    font-size: 32px;
+  }
+
+  @media (max-width: 800px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
