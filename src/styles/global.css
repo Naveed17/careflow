@@ -633,14 +633,19 @@ img {
 }
 
 .cf-spin--btn {
-  width: 16px;
-  height: 16px;
-  display: inline-block;
-  border: 2px solid rgba(255, 255, 255, 0.25);
+  width: 18px;
+  height: 18px;
+  display: none;
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 255, 255, 0.28);
   border-top-color: #fff;
   border-radius: 50%;
   flex-shrink: 0;
-  animation: cf-spin 0.75s linear infinite;
+  animation: cf-spin 0.7s linear infinite;
+}
+
+.cf-pkg__buy.is-busy .cf-spin--btn {
+  display: inline-block;
 }
 
 @keyframes cf-spin {
@@ -947,10 +952,6 @@ html.js-ready.reduce-motion [data-reveal] {
 
 @media (prefers-reduced-motion: reduce) {
   .cf-hero__blob {
-    animation: none;
-  }
-
-  .cf-spin {
     animation: none;
   }
 }

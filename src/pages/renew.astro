@@ -24,8 +24,8 @@ const apiBase = licenseApiBase();
       <p class="lead">
         Lifetime Windows license stays on. These hosted extras auto-off: Online DB after
         {ONLINE_DB_PERIOD_YEARS} year (${ONLINE_DB_ANNUAL_USD}), WhatsApp / AI after
-        {WHATSAPP_AI_PERIOD_MONTHS} month (${WHATSAPP_AI_MONTHLY_USD}). Pay here to turn them back on
-        from today.
+        {WHATSAPP_AI_PERIOD_MONTHS} month (${WHATSAPP_AI_MONTHLY_USD}). Only off or expired extras
+        show up to pay — already-on services stay hidden. Payment turns them back on from that day.
       </p>
     </div>
 
@@ -37,11 +37,11 @@ const apiBase = licenseApiBase();
         </li>
         <li>
           <strong>2. Pick what to switch on</strong>
-          <span>Online DB, WhatsApp Cloud API, and/or AI Assist. WhatsApp + AI share one $30 fee.</span>
+          <span>Only services that are off or expired appear here. Already-on extras stay hidden. WhatsApp + AI share one $30 fee.</span>
         </li>
         <li>
           <strong>3. Pay — they enable again</strong>
-          <span>Paddle checkout. That day starts a new period. Paying early stacks onto remaining days.</span>
+          <span>Paddle checkout. That day starts a new period for the services you switched back on.</span>
         </li>
       </ol>
 
@@ -66,7 +66,10 @@ const apiBase = licenseApiBase();
           <ul class="status" id="status-list"></ul>
 
           <form id="renew-form" class="cf-pkg__form">
-            <label class="cf-pkg__item">
+            <p class="renew-empty" id="renew-empty" hidden>
+              All hosted services are already on. Nothing to add until one auto-offs.
+            </p>
+            <label class="cf-pkg__item" id="row-db">
               <input type="checkbox" id="opt-db" />
               <span class="cf-pkg__check" aria-hidden="true"></span>
               <span class="cf-pkg__meta">
@@ -75,7 +78,7 @@ const apiBase = licenseApiBase();
               </span>
               <span class="cf-pkg__price">+${ONLINE_DB_ANNUAL_USD}/yr</span>
             </label>
-            <label class="cf-pkg__item">
+            <label class="cf-pkg__item" id="row-wa">
               <input type="checkbox" id="opt-wa" />
               <span class="cf-pkg__check" aria-hidden="true"></span>
               <span class="cf-pkg__meta">
@@ -84,7 +87,7 @@ const apiBase = licenseApiBase();
               </span>
               <span class="cf-pkg__price">+${WHATSAPP_AI_MONTHLY_USD}/mo</span>
             </label>
-            <label class="cf-pkg__item">
+            <label class="cf-pkg__item" id="row-ai">
               <input type="checkbox" id="opt-ai" />
               <span class="cf-pkg__check" aria-hidden="true"></span>
               <span class="cf-pkg__meta">
@@ -94,16 +97,18 @@ const apiBase = licenseApiBase();
               <span class="cf-pkg__price">+${WHATSAPP_AI_MONTHLY_USD}/mo</span>
             </label>
 
-            <input name="email" id="renew-email" type="email" required placeholder="Receipt email" autocomplete="email" />
-            <div class="cf-pkg__total">
-              <span>To pay</span>
-              <strong>$<span id="renew-total">0</span></strong>
+            <div id="renew-pay">
+              <input name="email" id="renew-email" type="email" required placeholder="Receipt email" autocomplete="email" />
+              <div class="cf-pkg__total">
+                <span>To pay</span>
+                <strong>$<span id="renew-total">0</span></strong>
+              </div>
+              <p class="cf-pkg__err" id="renew-err" hidden></p>
+              <button type="submit" class="cf-pkg__buy" id="renew-btn" disabled>
+                <span class="cf-spin cf-spin--btn" id="renew-spin" hidden></span>
+                <span id="renew-text">Select a service to renew</span>
+              </button>
             </div>
-            <p class="cf-pkg__err" id="renew-err" hidden></p>
-            <button type="submit" class="cf-pkg__buy" id="renew-btn" disabled>
-              <span class="cf-spin cf-spin--btn" id="renew-spin" hidden></span>
-              <span id="renew-text">Select a service to renew</span>
-            </button>
           </form>
         </div>
       </aside>
@@ -122,6 +127,11 @@ const apiBase = licenseApiBase();
   const optDb = document.getElementById('opt-db');
   const optWa = document.getElementById('opt-wa');
   const optAi = document.getElementById('opt-ai');
+  const rowDb = document.getElementById('row-db');
+  const rowWa = document.getElementById('row-wa');
+  const rowAi = document.getElementById('row-ai');
+  const renewEmpty = document.getElementById('renew-empty');
+  const renewPay = document.getElementById('renew-pay');
   const totalEl = document.getElementById('renew-total');
   const renewForm = document.getElementById('renew-form');
   const renewErr = document.getElementById('renew-err');
@@ -152,9 +162,24 @@ const apiBase = licenseApiBase();
     return offLabel;
   }
 
+  function isOffered(el) {
+    return Boolean(el && !el.disabled && !el.closest('[hidden]'));
+  }
+
+  function setOffer(row, checkbox, off) {
+    if (row) row.hidden = !off;
+    if (checkbox) {
+      checkbox.disabled = !off;
+      checkbox.checked = off;
+    }
+  }
+
   function calc() {
-    const yearly = optDb && optDb.checked ? ONLINE_DB_ANNUAL_USD : 0;
-    const monthly = (optWa && optWa.checked) || (optAi && optAi.checked) ? WHATSAPP_AI_MONTHLY_USD : 0;
+    const yearly = isOffered(optDb) && optDb.checked ? ONLINE_DB_ANNUAL_USD : 0;
+    const monthly =
+      (isOffered(optWa) && optWa.checked) || (isOffered(optAi) && optAi.checked)
+        ? WHATSAPP_AI_MONTHLY_USD
+        : 0;
     const total = yearly + monthly;
     if (totalEl) totalEl.textContent = String(total);
     const parts = [];
@@ -166,7 +191,26 @@ const apiBase = licenseApiBase();
     } else if (renewText && renewBtn?.disabled) {
       renewText.textContent = 'Select a service to renew';
     }
-    return { total, onlineDatabase: Boolean(optDb && optDb.checked), whatsapp: Boolean(optWa && optWa.checked), ai: Boolean(optAi && optAi.checked) };
+    return {
+      total,
+      onlineDatabase: isOffered(optDb) && optDb.checked,
+      whatsapp: isOffered(optWa) && optWa.checked,
+      ai: isOffered(optAi) && optAi.checked,
+    };
+  }
+
+  function setRenewBusy(on, message) {
+    if (renewBtn) {
+      renewBtn.classList.toggle('is-busy', on);
+      renewBtn.setAttribute('aria-busy', on ? 'true' : 'false');
+    }
+    if (renewSpin) renewSpin.hidden = !on;
+    if (on) {
+      if (renewBtn) renewBtn.disabled = true;
+      if (renewText) renewText.textContent = message || 'Please wait…';
+    } else {
+      calc();
+    }
   }
 
   [optDb, optWa, optAi].forEach((el) => el?.addEventListener('change', calc));
@@ -203,9 +247,16 @@ const apiBase = licenseApiBase();
         '</li><li>' +
         line(d.ai, d.aiExpiresAt, 'AI Assist is off', 'AI Assist on') +
         '</li>';
-      if (optDb) optDb.checked = !d.onlineDatabase;
-      if (optWa) optWa.checked = !d.whatsapp;
-      if (optAi) optAi.checked = !d.ai;
+      const dbOff = !d.onlineDatabase;
+      const waOff = !d.whatsapp;
+      const aiOff = !d.ai;
+      setOffer(rowDb, optDb, dbOff);
+      setOffer(rowWa, optWa, waOff);
+      setOffer(rowAi, optAi, aiOff);
+      const anyOff = dbOff || waOff || aiOff;
+      if (renewEmpty) renewEmpty.hidden = anyOff;
+      if (renewPay) renewPay.hidden = !anyOff;
+      if (emailEl) emailEl.required = anyOff;
       box.hidden = false;
       calc();
     } catch (ex) {
@@ -235,9 +286,7 @@ const apiBase = licenseApiBase();
       renewErr.hidden = false;
       return;
     }
-    renewBtn.disabled = true;
-    if (renewSpin) renewSpin.hidden = false;
-    if (renewText) renewText.textContent = 'Redirecting to secure checkout…';
+    setRenewBusy(true, 'Redirecting to secure checkout…');
     try {
       const res = await fetch(apiBase + '/api/billing/renew', {
         method: 'POST',
@@ -258,9 +307,7 @@ const apiBase = licenseApiBase();
     } catch (ex) {
       renewErr.textContent = (ex && ex.message) || 'Could not start checkout.';
       renewErr.hidden = false;
-      renewBtn.disabled = false;
-      if (renewSpin) renewSpin.hidden = true;
-      calc();
+      setRenewBusy(false);
     }
   });
 </script>
@@ -357,6 +404,17 @@ const apiBase = licenseApiBase();
     color: var(--muted);
     display: grid;
     gap: 4px;
+  }
+
+  .renew-empty {
+    margin: 0 0 8px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #f4faf6;
+    border: 1px solid rgba(22, 163, 74, 0.18);
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.5;
   }
 
   .panel .cf-pkg__item {

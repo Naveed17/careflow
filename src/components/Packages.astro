@@ -165,7 +165,11 @@ const apiBase = licenseApiBase();
   }
 
   function setBusy(on, message) {
-    if (buy) buy.disabled = on;
+    if (buy) {
+      buy.disabled = on;
+      buy.classList.toggle('is-busy', on);
+      buy.setAttribute('aria-busy', on ? 'true' : 'false');
+    }
     if (buySpin) buySpin.hidden = !on;
     if (on) {
       if (buyText) buyText.textContent = message || 'Please wait…';
