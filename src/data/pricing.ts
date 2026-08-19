@@ -1,8 +1,10 @@
 export const DOWNLOAD_URL =
   'https://github.com/Naveed17/clinic-app/releases/latest/download/CareFlow-Setup.exe';
 
-export const BASE_PRICE_USD = 100;
-export const FULL_PRICE_USD = 270;
+export const BASE_PRICE_USD = 200;
+export const FULL_PRICE_USD = 400;
+export const MONTHLY_BASE_PRICE_USD = 50;
+export const MONTHLY_FULL_PRICE_USD = 111;
 export const ONLINE_DB_ANNUAL_USD = 100;
 export const WHATSAPP_AI_MONTHLY_USD = 30;
 export const ONLINE_DB_PERIOD_YEARS = 1;
@@ -45,14 +47,15 @@ export const FUTURE_PREMIUM = [
 ] as const;
 
 export const ADDON_FEATURES = [
-  { key: 'labDashboard', label: 'Lab Dashboard', hint: 'Lab technician panel & results', price: 50 },
-  { key: 'reports', label: 'Reports', hint: 'Operational & financial reports', price: 25 },
-  { key: 'statistics', label: 'Statistics', hint: 'Charts & clinic analytics', price: 25 },
+  { key: 'labDashboard', label: 'Lab Dashboard', hint: 'Lab technician panel & results', price: 80, monthlyPrice: 25 },
+  { key: 'reports', label: 'Reports', hint: 'Operational & financial reports', price: 25, monthlyPrice: 12 },
+  { key: 'statistics', label: 'Statistics', hint: 'Charts & clinic analytics', price: 25, monthlyPrice: 12 },
   {
     key: 'manageUsers',
     label: 'Extra Admins',
     hint: 'Delete staff & extra admin accounts (Receptionist is always included)',
     price: 25,
+    monthlyPrice: 12,
   },
   {
     key: 'whatsapp',

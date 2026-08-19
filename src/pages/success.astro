@@ -105,6 +105,21 @@ const apiBase = licenseApiBase();
       return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
+    function applyPurchaseCopy(data) {
+      if (data?.kind === 'renew' || params.get('renew') === '1') return;
+      const monthly = data?.licenseType === 'monthly';
+      if (resultEyebrow) resultEyebrow.textContent = monthly ? 'Monthly license' : 'Lifetime license';
+      if (resultLead) {
+        resultLead.textContent = monthly
+          ? 'Your monthly license is ready. Copy the key, then download and activate CareFlow. Software access renews each month.'
+          : 'Your lifetime license is ready. Copy the key, then download and activate CareFlow.';
+      }
+      if (monthly && data?.expiresAt && renewHint) {
+        renewHint.hidden = false;
+        renewHint.textContent = 'Current period until ' + fmtDate(data.expiresAt);
+      }
+    }
+
     function applyRenewCopy(data) {
       const isRenew = data?.kind === 'renew' || params.get('renew') === '1';
       if (!isRenew) return;
@@ -133,6 +148,7 @@ const apiBase = licenseApiBase();
       if (barFill) barFill.style.width = '100%';
       keyEl.textContent = key;
       applyRenewCopy(data || { kind: params.get('renew') === '1' ? 'renew' : 'purchase' });
+      applyPurchaseCopy(data || {});
       try {
         sessionStorage.removeItem('careflow_ptxn');
       } catch {

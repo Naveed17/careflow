@@ -476,6 +476,30 @@ img {
   align-items: start;
 }
 
+.cf-pkg__plans {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.cf-pkg__plans button {
+  border: 1px solid rgba(15, 42, 26, 0.1);
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.cf-pkg__plans button.is-on {
+  border-color: rgba(22, 163, 74, 0.35);
+  background: #f0fdf4;
+  color: var(--green-deep);
+}
+
 .cf-pkg__builder,
 .cf-pkg__checkout {
   background: #fff;
