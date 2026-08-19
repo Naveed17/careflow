@@ -5,6 +5,7 @@ import {
   BASE_PRICE_USD,
   DOWNLOAD_URL,
   FULL_PRICE_USD,
+  FUTURE_PREMIUM,
   ONLINE_DB_ANNUAL_USD,
   WHATSAPP_AI_MONTHLY_USD,
   ONLINE_DB_PERIOD_YEARS,
@@ -62,6 +63,24 @@ const apiBase = licenseApiBase();
                 { 'hosted' in f && f.hosted ? <small>+${WHATSAPP_AI_MONTHLY_USD}/mo</small> : null}
               </span>
             </label>
+          ))
+        }
+      </div>
+
+      <div class="cf-pkg__divider">
+        <span>Considering for premium</span>
+      </div>
+      <div class="cf-pkg__list">
+        {
+          FUTURE_PREMIUM.map((f) => (
+            <div class="cf-pkg__item cf-pkg__item--soon">
+              <span class="cf-pkg__check cf-pkg__check--soon" aria-hidden="true"></span>
+              <span class="cf-pkg__meta">
+                <strong>{f.label}</strong>
+                <small>{f.hint}</small>
+              </span>
+              <span class="cf-pkg__price"><small>Later</small></span>
+            </div>
           ))
         }
       </div>

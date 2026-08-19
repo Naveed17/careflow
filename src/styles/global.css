@@ -624,6 +624,20 @@ img {
   box-shadow: inset 0 0 0 3px #fff;
 }
 
+.cf-pkg__item--soon {
+  cursor: default;
+  opacity: 0.78;
+}
+
+.cf-pkg__item--soon:hover {
+  background: transparent;
+}
+
+.cf-pkg__check--soon {
+  border-style: dashed;
+  background: transparent;
+}
+
 .page-minimal {
   overflow: hidden;
 }

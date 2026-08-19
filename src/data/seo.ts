@@ -47,7 +47,7 @@ export const faqs = [
   {
     question: 'Which clinic roles does CareFlow support?',
     answer:
-      'CareFlow includes dedicated workflows for Admin, Doctor, Reception, and Lab technician. The core package includes Admin + Receptionist accounts. Doctor and Lab roles unlock with their modules. Extra admin accounts are an optional add-on.',
+      'CareFlow includes dedicated workflows for Admin, Doctor, Reception, and Lab technician. The core package includes Admin + Receptionist + Doctor desks, billing and the medicines catalog. Lab technician unlocks with the Lab Dashboard add-on. Extra admin accounts are optional.',
   },
   {
     question: 'Can CareFlow print OPD tokens and prescriptions?',
@@ -62,12 +62,12 @@ export const faqs = [
   {
     question: 'What modules are included in CareFlow?',
     answer:
-      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Lab, Statistics, Doctors & Schedule, and staff accounts. Receptionist users are included in the core package; extra admin accounts and staff delete are an optional add-on.',
+      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Medicines catalog, Lab, Statistics, Doctors & Schedule, and staff accounts. Billing and medicines are in the core package. Lab is an add-on. Receptionist users are included; extra admin accounts and staff delete are optional.',
   },
   {
     question: 'What does online database, WhatsApp and AI cost?',
     answer:
-      'The Windows license is a one-time lifetime purchase ($100 core, $300 full modules). Hosted online database is $100 per year and auto-off after 1 year. WhatsApp Cloud API or AI Assist adds $30 per month (one fee even if both are on) and auto-off after 1 month. Renew on careflow.app/renew with your license key — payment turns the service back on from that day.',
+      'The Windows license is a one-time lifetime purchase ($100 core, $270 full modules). Core includes billing, invoices and the medicines catalog. Lab Dashboard is $50. Hosted online database is $100 per year and auto-off after 1 year. WhatsApp Cloud API or AI Assist adds $30 per month (one fee even if both are on) and auto-off after 1 month. Renew on careflow.app/renew with your license key — payment turns the service back on from that day.',
   },
   {
     question: 'How do I renew WhatsApp, AI or online database after they auto-off?',

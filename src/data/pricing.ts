@@ -2,7 +2,7 @@ export const DOWNLOAD_URL =
   'https://github.com/Naveed17/clinic-app/releases/latest/download/CareFlow-Setup.exe';
 
 export const BASE_PRICE_USD = 100;
-export const FULL_PRICE_USD = 300;
+export const FULL_PRICE_USD = 270;
 export const ONLINE_DB_ANNUAL_USD = 100;
 export const WHATSAPP_AI_MONTHLY_USD = 30;
 export const ONLINE_DB_PERIOD_YEARS = 1;
@@ -20,18 +20,34 @@ export const BASE_FEATURES = [
     hint: 'Tokens, patients, booking & receptionist staff accounts',
   },
   {
+    key: 'billing',
+    label: 'Billing / Invoices',
+    hint: 'Create invoices, take payments & pending bills',
+  },
+  {
+    key: 'manageMedicines',
+    label: 'Manage Medicines',
+    hint: 'Medicine catalog & prices for prescriptions and invoices',
+  },
+  {
     key: 'staff',
     label: 'Receptionist accounts',
     hint: 'Users page included — add receptionist staff without an extra module',
   },
 ] as const;
 
+/** Ideas for future paid add-ons (not sold yet). */
+export const FUTURE_PREMIUM = [
+  { label: 'Pharmacy / Inventory', hint: 'Stock, batches, purchase orders & expiry alerts' },
+  { label: 'SMS reminders', hint: 'Appointment & follow-up SMS to patients' },
+  { label: 'Multi-branch', hint: 'One license across multiple clinic locations' },
+  { label: 'Cloud backups', hint: 'Scheduled encrypted off-site backups' },
+] as const;
+
 export const ADDON_FEATURES = [
-  { key: 'labDashboard', label: 'Lab Dashboard', hint: 'Lab technician panel & results', price: 25 },
-  { key: 'billing', label: 'Billing / Invoices', hint: 'Invoices, payments & pending bills', price: 30 },
+  { key: 'labDashboard', label: 'Lab Dashboard', hint: 'Lab technician panel & results', price: 50 },
   { key: 'reports', label: 'Reports', hint: 'Operational & financial reports', price: 25 },
   { key: 'statistics', label: 'Statistics', hint: 'Charts & clinic analytics', price: 25 },
-  { key: 'manageMedicines', label: 'Medicines Catalog', hint: 'Medicine list for Rx picker', price: 25 },
   {
     key: 'manageUsers',
     label: 'Extra Admins',
