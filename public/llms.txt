@@ -1,8 +1,8 @@
 # CareFlow
 
-> Windows desktop clinic management software for patients, OPD tokens, appointments, prescriptions, billing, pharmacy and lab.
+> Windows desktop clinic management software for patients, OPD tokens, appointments, prescriptions, billing and lab.
 
-CareFlow is an offline-first clinic management system for Windows PCs. Clinics use it across reception and doctor rooms over LAN with role-based access for Admin, Doctor, Reception, Lab and Pharmacy.
+CareFlow is an offline-first clinic management system for Windows PCs. Clinics use it across reception and doctor rooms over LAN with role-based access for Admin, Doctor, Reception and Lab.
 
 ## Primary pages
 

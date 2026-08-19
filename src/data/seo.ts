@@ -13,7 +13,7 @@ export const defaultSeo = {
   title: 'CareFlow — Clinic Management Software for Windows',
   titleTemplate: '%s | CareFlow',
   description:
-    'CareFlow is desktop clinic management software for Windows. Manage patients, OPD tokens, appointments, prescriptions, billing, pharmacy and lab — offline SQLite, LAN multi-PC, role-based access.',
+    'CareFlow is desktop clinic management software for Windows. Manage patients, OPD tokens, appointments, prescriptions, billing and lab — offline SQLite, LAN multi-PC, role-based access.',
   keywords: [
     'clinic management software',
     'clinic management system',
@@ -23,7 +23,6 @@ export const defaultSeo = {
     'desktop EMR clinic',
     'offline clinic software',
     'LAN clinic management',
-    'pharmacy inventory clinic',
     'lab management clinic',
     'patient management software',
     'CareFlow',
@@ -38,7 +37,7 @@ export const faqs = [
   {
     question: 'What is CareFlow clinic management software?',
     answer:
-      'CareFlow is a Windows desktop clinic management system for small and mid-size clinics. It covers patients, OPD tokens, appointments, prescriptions, billing, pharmacy inventory, lab orders, statistics, doctors & schedules, and role-based staff access — with offline SQLite storage and LAN multi-PC sync.',
+      'CareFlow is a Windows desktop clinic management system for small and mid-size clinics. It covers patients, OPD tokens, appointments, prescriptions, billing, lab orders, statistics, doctors & schedules, and role-based staff access — with offline SQLite storage and LAN multi-PC sync.',
   },
   {
     question: 'Does CareFlow work offline without the internet?',
@@ -48,7 +47,7 @@ export const faqs = [
   {
     question: 'Which clinic roles does CareFlow support?',
     answer:
-      'CareFlow includes dedicated workflows for Admin, Doctor, Reception, Lab technician, and Pharmacy. The core package includes Admin + Receptionist accounts. Doctor, Lab and Pharmacist roles unlock with their modules. Extra admin accounts are an optional add-on.',
+      'CareFlow includes dedicated workflows for Admin, Doctor, Reception, and Lab technician. The core package includes Admin + Receptionist accounts. Doctor and Lab roles unlock with their modules. Extra admin accounts are an optional add-on.',
   },
   {
     question: 'Can CareFlow print OPD tokens and prescriptions?',
@@ -63,7 +62,7 @@ export const faqs = [
   {
     question: 'What modules are included in CareFlow?',
     answer:
-      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Inventory, Lab, Statistics, Doctors & Schedule, and staff accounts. Receptionist users are included in the core package; extra admin accounts and staff delete are an optional add-on.',
+      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Lab, Statistics, Doctors & Schedule, and staff accounts. Receptionist users are included in the core package; extra admin accounts and staff delete are an optional add-on.',
   },
   {
     question: 'What does online database, WhatsApp and AI cost?',

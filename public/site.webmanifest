@@ -1,7 +1,7 @@
 {
   "name": "CareFlow",
   "short_name": "CareFlow",
-  "description": "Clinic management software for Windows — patients, OPD tokens, prescriptions, billing, pharmacy & lab.",
+  "description": "Clinic management software for Windows — patients, OPD tokens, prescriptions, billing & lab.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f3f5f3",
