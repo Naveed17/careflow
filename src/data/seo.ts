@@ -67,11 +67,11 @@ export const faqs = [
   {
     question: 'What does online database, WhatsApp and AI cost?',
     answer:
-      'The Windows license is a one-time lifetime purchase ($200 core, $400 full) or a monthly starter at $50/mo (full software $111/mo). Lab is $80 lifetime or $25/mo. WhatsApp, AI and online database keep their current fees ($25 / $20 setup, $30/mo hosted, $100/year DB). Renew hosted services on careflow.app/renew.',
+      'The Windows license is a one-time lifetime purchase ($200 core, $400 full) or a monthly starter at $50/mo (full software $111/mo). Lab is $80 lifetime or $25/mo. WhatsApp and AI keep their current fees ($25 / $20 setup, $30/mo hosted). Online database is $100/year on lifetime or $15/mo on monthly. Renew hosted services on careflow.app/renew.',
   },
   {
     question: 'How do I renew WhatsApp, AI or online database after they auto-off?',
     answer:
-      'Open careflow.app/renew, enter your lifetime license key, choose Online DB ($100/year) and/or WhatsApp / AI ($30/month), and pay with Paddle. That day starts a new period and the features turn back on in CareFlow. Paying early adds another period onto the remaining days.',
+      'Open careflow.app/renew, enter your license key, choose Online DB ($100/year lifetime or $15/mo monthly) and/or WhatsApp / AI ($30/month), and pay with Paddle. That day starts a new period and the features turn back on in CareFlow. Paying early adds another period onto the remaining days.',
   },
 ];

@@ -19,7 +19,7 @@ CareFlow is an offline-first clinic management system for Windows PCs. Clinics u
 - Core features: patients, OPD tokens, appointments, prescription pad + PDF, billing, inventory, lab, statistics, doctors & schedule, users & roles, license modules
 - Deployment: offline SQLite, LAN multi-PC
 - Lifetime Windows license does not expire
-- Hosted Online DB is $100/year then auto-off; renew at /renew
+- Hosted Online DB is $100/year on lifetime or $15/mo on monthly, then auto-off; renew at /renew
 - Hosted WhatsApp Cloud API and AI Assist are $30/month (one fee) then auto-off; renew at /renew
 
 ## Contact

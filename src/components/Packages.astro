@@ -9,8 +9,10 @@ import {
   MONTHLY_BASE_PRICE_USD,
   MONTHLY_FULL_PRICE_USD,
   ONLINE_DB_ANNUAL_USD,
+  ONLINE_DB_MONTHLY_USD,
   WHATSAPP_AI_MONTHLY_USD,
   ONLINE_DB_PERIOD_YEARS,
+  ONLINE_DB_PERIOD_MONTHS,
   WHATSAPP_AI_PERIOD_MONTHS,
   licenseApiBase,
 } from '../data/pricing';
@@ -24,8 +26,9 @@ const apiBase = licenseApiBase();
     <p>
       Lifetime starter is <strong>${BASE_PRICE_USD}</strong> (full <strong>${FULL_PRICE_USD}</strong>).
       Monthly starter is <strong>${MONTHLY_BASE_PRICE_USD}/mo</strong> (full software
-      <strong>${MONTHLY_FULL_PRICE_USD}/mo</strong>). WhatsApp, AI and online database keep their
-      current fees — they are not converted to monthly license add-ons.
+      <strong>${MONTHLY_FULL_PRICE_USD}/mo</strong>). WhatsApp and AI keep their current fees.
+      Online database is <strong>${ONLINE_DB_ANNUAL_USD}/year</strong> on lifetime, or
+      <strong>${ONLINE_DB_MONTHLY_USD}/mo</strong> on monthly.
     </p>
   </div>
 
@@ -128,9 +131,9 @@ const apiBase = licenseApiBase();
         <span class="cf-pkg__check" aria-hidden="true"></span>
         <span class="cf-pkg__meta">
           <strong>Online database</strong>
-          <small>Cloud Postgres for your clinic — billed ${ONLINE_DB_ANNUAL_USD}/year, then auto-off. Off keeps local SQLite.</small>
+          <small id="pkg-online-db-hint">Cloud Postgres for your clinic — billed ${ONLINE_DB_ANNUAL_USD}/year, then auto-off. Off keeps local SQLite.</small>
         </span>
-        <span class="cf-pkg__price">+${ONLINE_DB_ANNUAL_USD}/yr</span>
+        <span class="cf-pkg__price" id="pkg-online-db-price">+${ONLINE_DB_ANNUAL_USD}/yr</span>
       </label>
     </div>
 
@@ -144,7 +147,7 @@ const apiBase = licenseApiBase();
       <ul class="cf-pkg__recurring" id="pkg-recurring">
         <li id="pkg-recurring-db" hidden>
           <span>Online DB</span>
-          <strong>${ONLINE_DB_ANNUAL_USD}/yr</strong>
+          <strong id="pkg-recurring-db-amt">${ONLINE_DB_ANNUAL_USD}/yr</strong>
         </li>
         <li id="pkg-recurring-hosted" hidden>
           <span>WhatsApp + AI</span>
@@ -165,7 +168,7 @@ const apiBase = licenseApiBase();
 
       <a class="cf-pkg__dl" href={DOWNLOAD_URL}>Download CareFlow-Setup.exe</a>
       <p class="cf-pkg__fine">
-        Paddle charges the license today. Monthly software renews each month. Online DB and WhatsApp/AI hosted fees start from the day they are enabled, then auto-off.
+        Paddle charges the license today. Monthly software renews each month. Online DB is ${ONLINE_DB_ANNUAL_USD}/year on lifetime or ${ONLINE_DB_MONTHLY_USD}/mo on monthly. WhatsApp/AI hosted fees start from the day they are enabled, then auto-off.
         <a href="/renew">Renew hosted services</a>
       </p>
     </aside>
@@ -179,6 +182,7 @@ const apiBase = licenseApiBase();
   MONTHLY_BASE_PRICE_USD,
   MONTHLY_FULL_PRICE_USD,
   ONLINE_DB_ANNUAL_USD,
+  ONLINE_DB_MONTHLY_USD,
   WHATSAPP_AI_MONTHLY_USD,
 }}>
   const priceEl = document.getElementById('pkg-price');
@@ -234,20 +238,39 @@ const apiBase = licenseApiBase();
     if (onceEl) {
       onceEl.textContent =
         billingInterval === 'monthly'
-          ? 'USD · monthly software + current WhatsApp / AI / Online DB fees'
+          ? 'USD · monthly software + WhatsApp / AI / Online DB hosted fees'
           : 'USD · one-time Paddle checkout';
     }
     if (totalLabel) totalLabel.textContent = billingInterval === 'monthly' ? 'Due today' : 'Lifetime';
+    const dbHint = document.getElementById('pkg-online-db-hint');
+    const dbPrice = document.getElementById('pkg-online-db-price');
+    const dbAmt = document.getElementById('pkg-recurring-db-amt');
+    if (billingInterval === 'monthly') {
+      if (dbHint) {
+        dbHint.textContent =
+          'Cloud Postgres for your clinic — billed $' + ONLINE_DB_MONTHLY_USD + '/month, then auto-off. Off keeps local SQLite.';
+      }
+      if (dbPrice) dbPrice.textContent = '+$' + ONLINE_DB_MONTHLY_USD + '/mo';
+      if (dbAmt) dbAmt.textContent = '$' + ONLINE_DB_MONTHLY_USD + '/mo';
+    } else {
+      if (dbHint) {
+        dbHint.textContent =
+          'Cloud Postgres for your clinic — billed $' + ONLINE_DB_ANNUAL_USD + '/year, then auto-off. Off keeps local SQLite.';
+      }
+      if (dbPrice) dbPrice.textContent = '+$' + ONLINE_DB_ANNUAL_USD + '/yr';
+      if (dbAmt) dbAmt.textContent = '$' + ONLINE_DB_ANNUAL_USD + '/yr';
+    }
     lifetimeBtn?.classList.toggle('is-on', billingInterval === 'lifetime');
     monthlyBtn?.classList.toggle('is-on', billingInterval === 'monthly');
     lifetimeBtn?.setAttribute('aria-selected', billingInterval === 'lifetime' ? 'true' : 'false');
     monthlyBtn?.setAttribute('aria-selected', billingInterval === 'monthly' ? 'true' : 'false');
   }
 
-  function formatCost(total, yearly, hostedMo, interval, setup) {
+  function formatCost(total, dbYearly, dbMonthly, hostedMo, interval, setup) {
     const parts = [interval === 'monthly' ? '$' + total + '/mo' : '$' + total];
     if (setup) parts.push('$' + setup + ' setup');
-    if (yearly) parts.push('$' + yearly + '/yr');
+    if (dbYearly) parts.push('$' + dbYearly + '/yr');
+    if (dbMonthly) parts.push('$' + dbMonthly + '/mo online DB');
     if (hostedMo) parts.push('$' + hostedMo + '/mo hosted');
     return parts.join(' + ');
   }
@@ -278,20 +301,22 @@ const apiBase = licenseApiBase();
       ? (allSoftware ? full : base + software)
       : (allLifetime ? full : base + software);
     const dueToday = recurring + setup;
-    const yearly = onlineDbEl && onlineDbEl.checked ? ONLINE_DB_ANNUAL_USD : 0;
+    const dbOn = Boolean(onlineDbEl && onlineDbEl.checked);
+    const yearly = dbOn && billingInterval !== 'monthly' ? ONLINE_DB_ANNUAL_USD : 0;
+    const dbMonthly = dbOn && billingInterval === 'monthly' ? ONLINE_DB_MONTHLY_USD : 0;
     const hostedMo = hostedOn() ? WHATSAPP_AI_MONTHLY_USD : 0;
     if (priceEl) priceEl.textContent = String(dueToday);
-    if (recDb) recDb.hidden = !yearly;
+    if (recDb) recDb.hidden = !(yearly || dbMonthly);
     if (recHosted) recHosted.hidden = !hostedMo;
     if (buyText && !buy?.disabled) {
       buyText.innerHTML =
-        'Purchase &amp; get license — ' + formatCost(recurring, yearly, hostedMo, billingInterval, setup);
+        'Purchase &amp; get license — ' + formatCost(recurring, yearly, dbMonthly, hostedMo, billingInterval, setup);
     }
     return {
       total: dueToday,
       yearly,
       monthly: hostedMo,
-      onlineDatabase: Boolean(onlineDbEl && onlineDbEl.checked),
+      onlineDatabase: dbOn,
       billingInterval,
     };
   }

@@ -2,7 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import {
   ONLINE_DB_ANNUAL_USD,
+  ONLINE_DB_MONTHLY_USD,
   ONLINE_DB_PERIOD_YEARS,
+  ONLINE_DB_PERIOD_MONTHS,
   WHATSAPP_AI_MONTHLY_USD,
   WHATSAPP_AI_PERIOD_MONTHS,
   licenseApiBase,
@@ -13,7 +15,7 @@ const apiBase = licenseApiBase();
 
 <Layout
   title="Renew WhatsApp, AI & online database — CareFlow"
-  description="Renew CareFlow hosted Online DB ($100/year) and WhatsApp / AI ($30/month) after auto-off. Enter your lifetime license key and pay with Paddle."
+  description="Renew CareFlow hosted Online DB ($100/year lifetime or $15/mo monthly) and WhatsApp / AI ($30/month) after auto-off. Enter your license key and pay with Paddle."
   keywords={['CareFlow renew', 'clinic WhatsApp', 'clinic AI', 'online database']}
   canonicalPath="/renew"
 >
@@ -22,8 +24,9 @@ const apiBase = licenseApiBase();
       <p class="eyebrow">Hosted services</p>
       <h1>Renew WhatsApp, AI or online DB</h1>
       <p class="lead">
-        Lifetime Windows license stays on. These hosted extras auto-off: Online DB after
-        {ONLINE_DB_PERIOD_YEARS} year (${ONLINE_DB_ANNUAL_USD}), WhatsApp / AI after
+        Lifetime Windows license stays on. Monthly software renews separately. These hosted extras
+        auto-off: Online DB after {ONLINE_DB_PERIOD_YEARS} year (${ONLINE_DB_ANNUAL_USD}) on lifetime,
+        or {ONLINE_DB_PERIOD_MONTHS} month (${ONLINE_DB_MONTHLY_USD}) on monthly. WhatsApp / AI after
         {WHATSAPP_AI_PERIOD_MONTHS} month (${WHATSAPP_AI_MONTHLY_USD}). Only off or expired extras
         show up to pay — already-on services stay hidden. Payment turns them back on from that day.
       </p>
@@ -74,9 +77,9 @@ const apiBase = licenseApiBase();
               <span class="cf-pkg__check" aria-hidden="true"></span>
               <span class="cf-pkg__meta">
                 <strong>Online database</strong>
-                <small>Cloud clinic data · ${ONLINE_DB_ANNUAL_USD} for {ONLINE_DB_PERIOD_YEARS} year</small>
+                <small id="opt-db-hint">Cloud clinic data · ${ONLINE_DB_ANNUAL_USD} for {ONLINE_DB_PERIOD_YEARS} year</small>
               </span>
-              <span class="cf-pkg__price">+${ONLINE_DB_ANNUAL_USD}/yr</span>
+              <span class="cf-pkg__price" id="opt-db-price">+${ONLINE_DB_ANNUAL_USD}/yr</span>
             </label>
             <label class="cf-pkg__item" id="row-wa">
               <input type="checkbox" id="opt-wa" />
@@ -116,7 +119,7 @@ const apiBase = licenseApiBase();
   </section>
 </Layout>
 
-<script define:vars={{ apiBase, ONLINE_DB_ANNUAL_USD, WHATSAPP_AI_MONTHLY_USD }}>
+<script define:vars={{ apiBase, ONLINE_DB_ANNUAL_USD, ONLINE_DB_MONTHLY_USD, WHATSAPP_AI_MONTHLY_USD }}>
   const lookupForm = document.getElementById('lookup-form');
   const lookupErr = document.getElementById('lookup-err');
   const lookupBtn = document.getElementById('lookup-btn');
@@ -141,6 +144,26 @@ const apiBase = licenseApiBase();
   const emailEl = document.getElementById('renew-email');
 
   let licenseKey = '';
+  let onlineDbIsMonthly = false;
+
+  function onlineDbAmount() {
+    return onlineDbIsMonthly ? ONLINE_DB_MONTHLY_USD : ONLINE_DB_ANNUAL_USD;
+  }
+
+  function onlineDbSuffix() {
+    return onlineDbIsMonthly ? '/mo' : '/yr';
+  }
+
+  function applyOnlineDbLabels() {
+    const hint = document.getElementById('opt-db-hint');
+    const price = document.getElementById('opt-db-price');
+    if (hint) {
+      hint.textContent = onlineDbIsMonthly
+        ? 'Cloud clinic data · $' + ONLINE_DB_MONTHLY_USD + ' for 1 month'
+        : 'Cloud clinic data · $' + ONLINE_DB_ANNUAL_USD + ' for 1 year';
+    }
+    if (price) price.textContent = '+$' + onlineDbAmount() + onlineDbSuffix();
+  }
 
   function preferLocalHttp(url) {
     if (typeof window.careflowPreferLocalHttp === 'function') {
@@ -175,15 +198,15 @@ const apiBase = licenseApiBase();
   }
 
   function calc() {
-    const yearly = isOffered(optDb) && optDb.checked ? ONLINE_DB_ANNUAL_USD : 0;
+    const dbFee = isOffered(optDb) && optDb.checked ? onlineDbAmount() : 0;
     const monthly =
       (isOffered(optWa) && optWa.checked) || (isOffered(optAi) && optAi.checked)
         ? WHATSAPP_AI_MONTHLY_USD
         : 0;
-    const total = yearly + monthly;
+    const total = dbFee + monthly;
     if (totalEl) totalEl.textContent = String(total);
     const parts = [];
-    if (yearly) parts.push('$' + yearly + '/yr');
+    if (dbFee) parts.push('$' + dbFee + onlineDbSuffix());
     if (monthly) parts.push('$' + monthly + '/mo');
     if (renewBtn) renewBtn.disabled = total === 0;
     if (renewText && !renewBtn?.disabled) {
@@ -238,6 +261,8 @@ const apiBase = licenseApiBase();
       if (!res.ok) throw new Error(json?.message || 'License not found');
       const d = json.data;
       licenseKey = d.key;
+      onlineDbIsMonthly = String(d.licenseType || '') === 'monthly';
+      applyOnlineDbLabels();
       clinicName.textContent = d.userName ? d.userName + ' · ' + d.key : d.key;
       statusList.innerHTML =
         '<li>' +

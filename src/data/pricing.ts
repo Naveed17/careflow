@@ -6,8 +6,10 @@ export const FULL_PRICE_USD = 400;
 export const MONTHLY_BASE_PRICE_USD = 50;
 export const MONTHLY_FULL_PRICE_USD = 111;
 export const ONLINE_DB_ANNUAL_USD = 100;
+export const ONLINE_DB_MONTHLY_USD = 15;
 export const WHATSAPP_AI_MONTHLY_USD = 30;
 export const ONLINE_DB_PERIOD_YEARS = 1;
+export const ONLINE_DB_PERIOD_MONTHS = 1;
 export const WHATSAPP_AI_PERIOD_MONTHS = 1;
 
 export const BASE_FEATURES = [
