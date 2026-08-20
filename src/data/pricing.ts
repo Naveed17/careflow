@@ -1,10 +1,10 @@
 export const DOWNLOAD_URL =
   'https://github.com/Naveed17/clinic-app/releases/latest/download/CareFlow-Setup.exe';
 
-export const BASE_PRICE_USD = 200;
+export const BASE_PRICE_USD = 150;
 export const FULL_PRICE_USD = 400;
 export const MONTHLY_BASE_PRICE_USD = 50;
-export const MONTHLY_FULL_PRICE_USD = 111;
+export const MONTHLY_FULL_PRICE_USD = 136;
 export const ONLINE_DB_ANNUAL_USD = 100;
 export const ONLINE_DB_MONTHLY_USD = 15;
 export const WHATSAPP_AI_MONTHLY_USD = 30;
@@ -58,6 +58,13 @@ export const ADDON_FEATURES = [
     hint: 'Delete staff & extra admin accounts (Receptionist is always included)',
     price: 25,
     monthlyPrice: 12,
+  },
+  {
+    key: 'chat',
+    label: 'Staff Chat',
+    hint: 'In-app staff chat on this PC / LAN and Online DB',
+    price: 50,
+    monthlyPrice: 25,
   },
   {
     key: 'whatsapp',

@@ -62,12 +62,12 @@ export const faqs = [
   {
     question: 'What modules are included in CareFlow?',
     answer:
-      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Medicines catalog, Lab, Statistics, Doctors & Schedule, and staff accounts. Billing and medicines are in the core package. Lab is an add-on. Receptionist users are included; extra admin accounts and staff delete are optional.',
+      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Medicines catalog, Lab, Staff Chat, Statistics, Doctors & Schedule, and staff accounts. Billing and medicines are in the core package. Lab and Staff Chat are add-ons. Receptionist users are included; extra admin accounts and staff delete are optional.',
   },
   {
     question: 'What does online database, WhatsApp and AI cost?',
     answer:
-      'The Windows license is a one-time lifetime purchase ($200 core, $400 full) or a monthly starter at $50/mo (full software $111/mo). Lab is $80 lifetime or $25/mo. WhatsApp and AI keep their current fees ($25 / $20 setup, $30/mo hosted). Online database is $100/year on lifetime or $15/mo on monthly. Renew hosted services on careflow.app/renew.',
+      'The Windows license is a one-time lifetime purchase ($150 core, $400 full) or a monthly starter at $50/mo (full software $136/mo). Lab is $80 lifetime or $25/mo. Staff Chat is $50 lifetime or $25/mo. WhatsApp and AI keep their current fees ($25 / $20 setup, $30/mo hosted). Online database is $100/year on lifetime or $15/mo on monthly. Renew hosted services on careflow.app/renew.',
   },
   {
     question: 'How do I renew WhatsApp, AI or online database after they auto-off?',
