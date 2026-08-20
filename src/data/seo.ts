@@ -67,7 +67,7 @@ export const faqs = [
   {
     question: 'What does online database, WhatsApp and AI cost?',
     answer:
-      'The Windows license is a one-time lifetime purchase ($150 core, $425 full) or a monthly starter at $50/mo (full software $148/mo). Lab is $80 lifetime or $25/mo. OPD Reports is $25 lifetime or $12/mo. Staff Chat is $50 lifetime or $25/mo. WhatsApp and AI keep their current fees ($25 / $20 setup, $30/mo hosted). Online database is $100/year on lifetime or $15/mo on monthly. Renew hosted services on careflow.app/renew.',
+      'The Windows license is a one-time lifetime purchase ($150 core, $400 full) or a monthly starter at $50/mo (full software $136/mo). Lab is $80 lifetime or $25/mo. OPD Reports is $25 lifetime or $12/mo. Staff Chat is $50 lifetime or $25/mo. WhatsApp and AI keep their current fees ($25 / $20 setup, $30/mo hosted). Online database is $100/year on lifetime or $15/mo on monthly. Renew hosted services on careflow.app/renew.',
   },
   {
     question: 'How do I renew WhatsApp, AI or online database after they auto-off?',
