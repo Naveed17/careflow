@@ -2,9 +2,9 @@ export const DOWNLOAD_URL =
   'https://github.com/Naveed17/clinic-app/releases/latest/download/CareFlow-Setup.exe';
 
 export const BASE_PRICE_USD = 150;
-export const FULL_PRICE_USD = 400;
+export const FULL_PRICE_USD = 425;
 export const MONTHLY_BASE_PRICE_USD = 50;
-export const MONTHLY_FULL_PRICE_USD = 136;
+export const MONTHLY_FULL_PRICE_USD = 148;
 export const ONLINE_DB_ANNUAL_USD = 100;
 export const ONLINE_DB_MONTHLY_USD = 15;
 export const WHATSAPP_AI_MONTHLY_USD = 30;
@@ -51,6 +51,13 @@ export const FUTURE_PREMIUM = [
 export const ADDON_FEATURES = [
   { key: 'labDashboard', label: 'Lab Dashboard', hint: 'Lab technician panel & results', price: 80, monthlyPrice: 25 },
   { key: 'reports', label: 'Reports', hint: 'Operational & financial reports', price: 25, monthlyPrice: 12 },
+  {
+    key: 'opdReports',
+    label: 'OPD Reports',
+    hint: 'Receptionist daily invoice & doctor fee settlement',
+    price: 25,
+    monthlyPrice: 12,
+  },
   { key: 'statistics', label: 'Statistics', hint: 'Charts & clinic analytics', price: 25, monthlyPrice: 12 },
   {
     key: 'manageUsers',
