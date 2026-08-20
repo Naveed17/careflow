@@ -55,7 +55,7 @@ export const ADDON_FEATURES = [
   {
     key: 'manageUsers',
     label: 'Extra Admins',
-    hint: 'Delete staff & extra admin accounts (Receptionist is always included)',
+    hint: 'Extra admin accounts. The first admin can already add, edit, and delete Reception / Doctor / Lab staff.',
     price: 25,
     monthlyPrice: 12,
   },
