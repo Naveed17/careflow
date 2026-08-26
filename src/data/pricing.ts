@@ -1,10 +1,11 @@
 export const DOWNLOAD_URL =
   'https://github.com/Naveed17/clinic-app/releases/latest/download/CareFlow-Setup.exe';
 
-export const BASE_PRICE_USD = 150;
-export const FULL_PRICE_USD = 400;
-export const MONTHLY_BASE_PRICE_USD = 50;
-export const MONTHLY_FULL_PRICE_USD = 136;
+export const ANNUAL_BASE_PRICE_USD = 108;
+export const BASE_PRICE_USD = 108;
+export const FULL_PRICE_USD = 108;
+export const MONTHLY_BASE_PRICE_USD = 18;
+export const MONTHLY_FULL_PRICE_USD = 18;
 export const ONLINE_DB_ANNUAL_USD = 100;
 export const ONLINE_DB_MONTHLY_USD = 15;
 export const WHATSAPP_AI_MONTHLY_USD = 30;
@@ -34,9 +35,24 @@ export const BASE_FEATURES = [
     hint: 'Medicine catalog & prices for prescriptions and invoices',
   },
   {
-    key: 'staff',
-    label: 'Receptionist accounts',
-    hint: 'Users page included — add receptionist staff without an extra module',
+    key: 'labDashboard',
+    label: 'Lab Dashboard',
+    hint: 'Lab technician panel & results (included in package)',
+  },
+  {
+    key: 'opdReports',
+    label: 'OPD Reports',
+    hint: 'Receptionist daily invoice & doctor fee settlement (included in package)',
+  },
+  {
+    key: 'statistics',
+    label: 'Statistics',
+    hint: 'Charts & clinic analytics (included in package)',
+  },
+  {
+    key: 'chat',
+    label: 'Staff Chat',
+    hint: 'In-app staff chat on LAN & Online DB (included in package)',
   },
 ] as const;
 
@@ -49,34 +65,12 @@ export const FUTURE_PREMIUM = [
 ] as const;
 
 export const ADDON_FEATURES = [
-  { key: 'labDashboard', label: 'Lab Dashboard', hint: 'Lab technician panel & results', price: 80, monthlyPrice: 25 },
-  {
-    key: 'opdReports',
-    label: 'OPD Reports',
-    hint: 'Receptionist daily invoice & doctor fee settlement',
-    price: 25,
-    monthlyPrice: 12,
-  },
-  { key: 'statistics', label: 'Statistics', hint: 'Charts & clinic analytics', price: 25, monthlyPrice: 12 },
-  {
-    key: 'manageUsers',
-    label: 'Extra Admins',
-    hint: 'Extra admin accounts. The first admin can already add, edit, and delete Reception / Doctor / Lab staff.',
-    price: 25,
-    monthlyPrice: 12,
-  },
-  {
-    key: 'chat',
-    label: 'Staff Chat',
-    hint: 'In-app staff chat on this PC / LAN and Online DB',
-    price: 50,
-    monthlyPrice: 25,
-  },
   {
     key: 'whatsapp',
     label: 'WhatsApp Cloud API',
     hint: 'In-app send, documents & campaigns (WhatsApp Web is always free). Hosted usage is $30/mo with AI, then auto-off after 1 month unless you renew.',
     price: 25,
+    monthlyPrice: 0,
     hosted: true,
   },
   {
@@ -84,6 +78,7 @@ export const ADDON_FEATURES = [
     label: 'AI Assist',
     hint: 'History summarize, Rx draft & per-clinic Groq Connect. Hosted usage is $30/mo with WhatsApp, then auto-off after 1 month unless you renew.',
     price: 20,
+    monthlyPrice: 0,
     hosted: true,
   },
 ] as const;

@@ -24,18 +24,16 @@ const apiBase = licenseApiBase();
   <div class="cf-pkg__head" data-reveal>
     <h2>Build your CareFlow package</h2>
     <p>
-      Lifetime starter is <strong>${BASE_PRICE_USD}</strong> (full <strong>${FULL_PRICE_USD}</strong>).
-      Monthly starter is <strong>${MONTHLY_BASE_PRICE_USD}/mo</strong> (full software
-      <strong>${MONTHLY_FULL_PRICE_USD}/mo</strong>). WhatsApp and AI keep their current fees.
-      Online database is <strong>${ONLINE_DB_ANNUAL_USD}/year</strong> on lifetime, or
-      <strong>${ONLINE_DB_MONTHLY_USD}/mo</strong> on monthly.
+      Annual (Salana) package is <strong>₨30,000/year</strong> ($108).
+      Monthly package is <strong>₨5,000/month</strong> ($18).
+      All software features are included in the package. WhatsApp and AI setup fees apply if enabled.
     </p>
   </div>
 
   <div class="cf-pkg__panel" data-reveal data-delay="60">
     <div class="cf-pkg__builder">
       <div class="cf-pkg__plans" role="tablist" aria-label="Billing interval">
-        <button type="button" class="is-on" id="pkg-plan-lifetime" data-plan="lifetime" role="tab" aria-selected="true">
+        <button type="button" class="is-on" id="pkg-plan-annual" data-plan="annual" role="tab" aria-selected="true">
           <span class="cf-pkg__plan-ico" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M5 16.5 3.5 8l5 2.5L12 5l3.5 5.5 5-2.5-1.5 8.5H5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -43,10 +41,10 @@ const apiBase = licenseApiBase();
             </svg>
           </span>
           <span class="cf-pkg__plan-copy">
-            <strong>Lifetime</strong>
-            <small>Pay once · ${BASE_PRICE_USD}</small>
+            <strong>Annual (Salana)</strong>
+            <small>₨30,000/yr · $108/yr</small>
           </span>
-          <span class="cf-pkg__plan-badge">Best value</span>
+          <span class="cf-pkg__plan-badge">Popular</span>
         </button>
         <button type="button" id="pkg-plan-monthly" data-plan="monthly" role="tab" aria-selected="false">
           <span class="cf-pkg__plan-ico" aria-hidden="true">
@@ -57,7 +55,7 @@ const apiBase = licenseApiBase();
           </span>
           <span class="cf-pkg__plan-copy">
             <strong>Monthly</strong>
-            <small>Flexible · ${MONTHLY_BASE_PRICE_USD}/mo</small>
+            <small>₨5,000/mo · $18/mo</small>
           </span>
         </button>
       </div>
@@ -199,10 +197,10 @@ const apiBase = licenseApiBase();
   const corePrice = document.getElementById('pkg-core-price');
   const coreTitle = document.getElementById('pkg-core-title');
   const totalLabel = document.getElementById('pkg-total-label');
-  const lifetimeBtn = document.getElementById('pkg-plan-lifetime');
+  const annualBtn = document.getElementById('pkg-plan-annual');
   const monthlyBtn = document.getElementById('pkg-plan-monthly');
   const boxes = () => Array.from(document.querySelectorAll('[data-addon]'));
-  let billingInterval = 'lifetime';
+  let billingInterval = 'annual';
 
   function isHostedAddon(el) {
     return el.dataset.addon === 'whatsapp' || el.dataset.addon === 'ai';
@@ -229,19 +227,19 @@ const apiBase = licenseApiBase();
     });
     if (corePrice) {
       corePrice.textContent =
-        billingInterval === 'monthly' ? '$' + MONTHLY_BASE_PRICE_USD + '/mo' : '$' + BASE_PRICE_USD;
+        billingInterval === 'monthly' ? '$' + MONTHLY_BASE_PRICE_USD + '/mo' : '$' + BASE_PRICE_USD + '/yr';
     }
     if (coreTitle) {
       coreTitle.textContent =
-        billingInterval === 'monthly' ? 'Monthly starter · Doctor + Reception' : 'Core · Doctor + Reception';
+        billingInterval === 'monthly' ? 'Monthly package · All software included' : 'Annual package (Salana) · All software included';
     }
     if (onceEl) {
       onceEl.textContent =
         billingInterval === 'monthly'
-          ? 'USD · monthly software + WhatsApp / AI / Online DB hosted fees'
-          : 'USD · one-time Paddle checkout';
+          ? 'USD · monthly package + WhatsApp / AI / Online DB hosted fees'
+          : 'USD · annual package + WhatsApp / AI / Online DB hosted fees';
     }
-    if (totalLabel) totalLabel.textContent = billingInterval === 'monthly' ? 'Due today' : 'Lifetime';
+    if (totalLabel) totalLabel.textContent = billingInterval === 'monthly' ? 'Monthly' : 'Annual';
     const dbHint = document.getElementById('pkg-online-db-hint');
     const dbPrice = document.getElementById('pkg-online-db-price');
     const dbAmt = document.getElementById('pkg-recurring-db-amt');
@@ -260,14 +258,14 @@ const apiBase = licenseApiBase();
       if (dbPrice) dbPrice.textContent = '+$' + ONLINE_DB_ANNUAL_USD + '/yr';
       if (dbAmt) dbAmt.textContent = '$' + ONLINE_DB_ANNUAL_USD + '/yr';
     }
-    lifetimeBtn?.classList.toggle('is-on', billingInterval === 'lifetime');
+    annualBtn?.classList.toggle('is-on', billingInterval === 'annual');
     monthlyBtn?.classList.toggle('is-on', billingInterval === 'monthly');
-    lifetimeBtn?.setAttribute('aria-selected', billingInterval === 'lifetime' ? 'true' : 'false');
+    annualBtn?.setAttribute('aria-selected', billingInterval === 'annual' ? 'true' : 'false');
     monthlyBtn?.setAttribute('aria-selected', billingInterval === 'monthly' ? 'true' : 'false');
   }
 
   function formatCost(total, dbYearly, dbMonthly, hostedMo, interval, setup) {
-    const parts = [interval === 'monthly' ? '$' + total + '/mo' : '$' + total];
+    const parts = [interval === 'monthly' ? '$' + total + '/mo' : '$' + total + '/yr'];
     if (setup) parts.push('$' + setup + ' setup');
     if (dbYearly) parts.push('$' + dbYearly + '/yr');
     if (dbMonthly) parts.push('$' + dbMonthly + '/mo online DB');
@@ -279,27 +277,14 @@ const apiBase = licenseApiBase();
     syncAddonLabels();
     let software = 0;
     let setup = 0;
-    let allSoftware = true;
-    let allLifetime = true;
     boxes().forEach((el) => {
       const hosted = isHostedAddon(el);
-      if (billingInterval === 'monthly') {
-        if (hosted) {
-          if (el.checked) setup += Number(el.dataset.price || 0);
-          return;
-        }
-        if (!el.checked) allSoftware = false;
-        if (el.checked) software += addonUnitPrice(el);
-        return;
+      if (hosted && el.checked) {
+        setup += Number(el.dataset.price || 0);
       }
-      if (!el.checked) allLifetime = false;
-      if (el.checked) software += addonUnitPrice(el);
     });
     const base = billingInterval === 'monthly' ? MONTHLY_BASE_PRICE_USD : BASE_PRICE_USD;
-    const full = billingInterval === 'monthly' ? MONTHLY_FULL_PRICE_USD : FULL_PRICE_USD;
-    const recurring = billingInterval === 'monthly'
-      ? (allSoftware ? full : base + software)
-      : (allLifetime ? full : base + software);
+    const recurring = base;
     const dueToday = recurring + setup;
     const dbOn = Boolean(onlineDbEl && onlineDbEl.checked);
     const yearly = dbOn && billingInterval !== 'monthly' ? ONLINE_DB_ANNUAL_USD : 0;
@@ -356,7 +341,7 @@ const apiBase = licenseApiBase();
   }
 
   function setPlan(next) {
-    billingInterval = next === 'monthly' ? 'monthly' : 'lifetime';
+    billingInterval = next === 'monthly' ? 'monthly' : 'annual';
     calc();
   }
 
@@ -368,7 +353,7 @@ const apiBase = licenseApiBase();
     });
     calc();
   });
-  lifetimeBtn?.addEventListener('click', () => setPlan('lifetime'));
+  annualBtn?.addEventListener('click', () => setPlan('annual'));
   monthlyBtn?.addEventListener('click', () => setPlan('monthly'));
   calc();
 

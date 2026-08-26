@@ -47,7 +47,7 @@ export const faqs = [
   {
     question: 'Which clinic roles does CareFlow support?',
     answer:
-      'CareFlow includes dedicated workflows for Admin, Doctor, Reception, and Lab technician. The core package includes Admin + Receptionist + Doctor desks, billing and the medicines catalog. Lab technician unlocks with the Lab Dashboard add-on. OPD Reports is a receptionist-only add-on. Extra admin accounts are optional.',
+      'CareFlow includes dedicated workflows for Admin, Doctor, Reception, and Lab technician. All software modules including Doctor Dashboard, Reception desk, Billing, Medicines, Lab Dashboard, OPD Reports, Statistics, and Staff Chat are included in the package.',
   },
   {
     question: 'Can CareFlow print OPD tokens and prescriptions?',
@@ -62,16 +62,16 @@ export const faqs = [
   {
     question: 'What modules are included in CareFlow?',
     answer:
-      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Medicines catalog, Lab, OPD Reports, Staff Chat, Statistics, Doctors & Schedule, and staff accounts. Billing and medicines are in the core package. Lab, OPD Reports and Staff Chat are add-ons. Receptionist users are included; extra admin accounts and staff delete are optional.',
+      'Modules include Dashboard, Patients, Appointments, OPD Tokens, Prescription Pad, Billing, Medicines catalog, Lab, OPD Reports, Staff Chat, Statistics, Doctors & Schedule, and staff accounts. All software modules are included in both Annual and Monthly packages. WhatsApp and AI are optional add-ons.',
   },
   {
     question: 'What does online database, WhatsApp and AI cost?',
     answer:
-      'The Windows license is a one-time lifetime purchase ($150 core, $400 full) or a monthly starter at $50/mo (full software $136/mo). Lab is $80 lifetime or $25/mo. OPD Reports is $25 lifetime or $12/mo. Staff Chat is $50 lifetime or $25/mo. WhatsApp and AI keep their current fees ($25 / $20 setup, $30/mo hosted). Online database is $100/year on lifetime or $15/mo on monthly. Renew hosted services on careflow.app/renew.',
+      'CareFlow offers an Annual (Salana) package at ₨30,000/year ($108/yr) and a Monthly package at ₨5,000/month ($18/mo). Lifetime license remains ₨30,000 ($108). All software features are included. WhatsApp and AI setup fees are $25 / $20 one-time, with $30/mo hosted usage. Online database is $100/year on annual/lifetime or $15/mo on monthly.',
   },
   {
     question: 'How do I renew WhatsApp, AI or online database after they auto-off?',
     answer:
-      'Open careflow.app/renew, enter your license key, choose Online DB ($100/year lifetime or $15/mo monthly) and/or WhatsApp / AI ($30/month), and pay with Paddle. That day starts a new period and the features turn back on in CareFlow. Paying early adds another period onto the remaining days.',
+      'Open careflow.app/renew, enter your license key, choose Online DB ($100/year annual/lifetime or $15/mo monthly) and/or WhatsApp / AI ($30/month), and pay securely. That day starts a new period and the features turn back on in CareFlow.',
   },
 ];
