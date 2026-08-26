@@ -7,7 +7,7 @@ const apiBase = licenseApiBase();
 
 <Layout
   title="Payment success — CareFlow License"
-  description="Your CareFlow lifetime license key after Paddle checkout."
+  description="Your CareFlow license key after Paddle checkout."
   canonicalPath="/success"
   minimal
 >
@@ -16,7 +16,7 @@ const apiBase = licenseApiBase();
       <div class="spinner" aria-hidden="true"></div>
       <p class="eyebrow">License server</p>
       <h1>Generating your key</h1>
-      <p class="lead" id="status">Confirming payment and creating your lifetime license…</p>
+      <p class="lead" id="status">Confirming payment and creating your CareFlow license…</p>
       <div class="bar" aria-hidden="true">
         <span id="bar-fill"></span>
       </div>
@@ -24,9 +24,9 @@ const apiBase = licenseApiBase();
     </div>
 
     <div class="card" id="result" hidden>
-      <p class="eyebrow" id="result-eyebrow">Lifetime license</p>
+      <p class="eyebrow" id="result-eyebrow">CareFlow license</p>
       <h1 id="result-title">You&apos;re all set</h1>
-      <p class="lead" id="result-lead">Your lifetime license is ready. Copy the key, then download and activate CareFlow.</p>
+      <p class="lead" id="result-lead">Your CareFlow license is ready. Copy the key, then download and activate CareFlow.</p>
 
       <div class="keybox" id="keybox">
         <span>Your license key</span>
@@ -108,11 +108,11 @@ const apiBase = licenseApiBase();
     function applyPurchaseCopy(data) {
       if (data?.kind === 'renew' || params.get('renew') === '1') return;
       const monthly = data?.licenseType === 'monthly';
-      if (resultEyebrow) resultEyebrow.textContent = monthly ? 'Monthly license' : 'Lifetime license';
+      if (resultEyebrow) resultEyebrow.textContent = monthly ? 'Monthly license' : 'Annual license';
       if (resultLead) {
         resultLead.textContent = monthly
           ? 'Your monthly license is ready. Copy the key, then download and activate CareFlow. Software access renews each month.'
-          : 'Your lifetime license is ready. Copy the key, then download and activate CareFlow.';
+          : 'Your annual license is ready. Copy the key, then download and activate CareFlow.';
       }
       if (monthly && data?.expiresAt && renewHint) {
         renewHint.hidden = false;
@@ -137,7 +137,7 @@ const apiBase = licenseApiBase();
         renewHint.hidden = bits.length === 0;
         renewHint.textContent = bits.join(' · ');
       }
-      if (keepHint) keepHint.textContent = 'Your lifetime Windows license key did not change.';
+      if (keepHint) keepHint.textContent = 'Your CareFlow Windows license key did not change.';
     }
 
     function showKey(key, data) {
@@ -187,7 +187,7 @@ const apiBase = licenseApiBase();
         if (status) {
           status.textContent =
             attempt === 1
-              ? 'Confirming payment and creating your lifetime license…'
+              ? 'Confirming payment and creating your CareFlow license…'
               : 'Still generating your license key. This can take a few seconds…';
         }
         try {

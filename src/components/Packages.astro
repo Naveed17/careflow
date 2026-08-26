@@ -138,10 +138,10 @@ const apiBase = licenseApiBase();
     <aside class="cf-pkg__checkout">
       <p class="cf-pkg__label">Checkout</p>
       <div class="cf-pkg__total">
-        <span id="pkg-total-label">Lifetime</span>
+        <span id="pkg-total-label">Annual</span>
         <strong>$<span id="pkg-price">{BASE_PRICE_USD}</span></strong>
       </div>
-      <p class="cf-pkg__once" id="pkg-once">USD · one-time Paddle checkout</p>
+      <p class="cf-pkg__once" id="pkg-once">USD · annual package checkout</p>
       <ul class="cf-pkg__recurring" id="pkg-recurring">
         <li id="pkg-recurring-db" hidden>
           <span>Online DB</span>
@@ -166,7 +166,7 @@ const apiBase = licenseApiBase();
 
       <a class="cf-pkg__dl" href={DOWNLOAD_URL}>Download CareFlow-Setup.exe</a>
       <p class="cf-pkg__fine">
-        Paddle charges the license today. Monthly software renews each month. Online DB is ${ONLINE_DB_ANNUAL_USD}/year on lifetime or ${ONLINE_DB_MONTHLY_USD}/mo on monthly. WhatsApp/AI hosted fees start from the day they are enabled, then auto-off.
+        Paddle charges the license today. Monthly software renews each month. Online DB is ${ONLINE_DB_ANNUAL_USD}/year on annual or ${ONLINE_DB_MONTHLY_USD}/mo on monthly. WhatsApp/AI hosted fees start from the day they are enabled, then auto-off.
         <a href="/renew">Renew hosted services</a>
       </p>
     </aside>
