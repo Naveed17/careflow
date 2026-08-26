@@ -56,6 +56,34 @@ export const BASE_FEATURES = [
   },
 ] as const;
 
+export const INCLUDED_SOFTWARE_ADDONS = [
+  {
+    key: 'labDashboard',
+    label: 'Lab Dashboard',
+    hint: 'Lab technician panel & results',
+  },
+  {
+    key: 'opdReports',
+    label: 'OPD Reports',
+    hint: 'Receptionist daily invoice & doctor fee settlement',
+  },
+  {
+    key: 'statistics',
+    label: 'Statistics',
+    hint: 'Charts & clinic analytics',
+  },
+  {
+    key: 'manageUsers',
+    label: 'Extra Admins',
+    hint: 'Extra admin accounts. The first admin can already manage staff.',
+  },
+  {
+    key: 'chat',
+    label: 'Staff Chat',
+    hint: 'In-app staff chat on LAN & Online DB',
+  },
+] as const;
+
 /** Ideas for future paid add-ons (not sold yet). */
 export const FUTURE_PREMIUM = [
   { label: 'Pharmacy / Inventory', hint: 'Stock, batches, purchase orders & expiry alerts' },

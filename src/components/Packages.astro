@@ -6,6 +6,7 @@ import {
   DOWNLOAD_URL,
   FULL_PRICE_USD,
   FUTURE_PREMIUM,
+  INCLUDED_SOFTWARE_ADDONS,
   MONTHLY_BASE_PRICE_USD,
   MONTHLY_FULL_PRICE_USD,
   ONLINE_DB_ANNUAL_USD,
@@ -79,6 +80,27 @@ const apiBase = licenseApiBase();
       </div>
 
       <div class="cf-pkg__list" id="pkg-addons">
+        {
+          INCLUDED_SOFTWARE_ADDONS.map((f) => (
+            <label class="cf-pkg__item cf-pkg__item--included">
+              <input
+                type="checkbox"
+                checked
+                disabled
+                data-addon={f.key}
+                data-price="0"
+              />
+              <span class="cf-pkg__check" aria-hidden="true"></span>
+              <span class="cf-pkg__meta">
+                <strong>{f.label}</strong>
+                <small>{f.hint}</small>
+              </span>
+              <span class="cf-pkg__price">
+                <span class="cf-pkg__badge-included">Included</span>
+              </span>
+            </label>
+          ))
+        }
         {
           ADDON_FEATURES.map((f) => (
             <label class="cf-pkg__item">

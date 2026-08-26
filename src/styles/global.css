@@ -752,6 +752,27 @@ img {
   background: transparent;
 }
 
+.cf-pkg__item--included {
+  cursor: default !important;
+  user-select: none;
+}
+
+.cf-pkg__item--included:hover {
+  background: #f0fdf4 !important;
+}
+
+.cf-pkg__badge-included {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(22, 163, 74, 0.15);
+  color: var(--green-deep);
+  font-size: 11.5px;
+  font-weight: 800;
+}
+
 .page-minimal {
   overflow: hidden;
 }
