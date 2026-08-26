@@ -1,10 +1,7 @@
 ---
 import {
   ONLINE_DB_ANNUAL_USD,
-  ONLINE_DB_MONTHLY_USD,
   ONLINE_DB_PERIOD_YEARS,
-  ONLINE_DB_PERIOD_MONTHS,
-  WHATSAPP_AI_MONTHLY_USD,
   WHATSAPP_AI_PERIOD_MONTHS,
 } from '../data/pricing';
 
@@ -12,7 +9,7 @@ const steps = [
   {
     n: '01',
     title: 'Enable — clock starts that day',
-    body: `Turn on Online DB, WhatsApp or AI with your license. Online DB stays on for ${ONLINE_DB_PERIOD_YEARS} year ($${ONLINE_DB_ANNUAL_USD}) on annual, or ${ONLINE_DB_PERIOD_MONTHS} month ($${ONLINE_DB_MONTHLY_USD}) on monthly. WhatsApp and/or AI stay on for ${WHATSAPP_AI_PERIOD_MONTHS} month ($${WHATSAPP_AI_MONTHLY_USD}, one fee).`,
+    body: `Turn on Online DB, WhatsApp or AI with your license. Online DB stays on for ${ONLINE_DB_PERIOD_YEARS} year ($${ONLINE_DB_ANNUAL_USD}). WhatsApp and/or AI stay on for ${WHATSAPP_AI_PERIOD_MONTHS} month ($10/mo each).`,
   },
   {
     n: '02',

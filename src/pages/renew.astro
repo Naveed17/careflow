@@ -2,9 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import {
   ONLINE_DB_ANNUAL_USD,
-  ONLINE_DB_MONTHLY_USD,
   ONLINE_DB_PERIOD_YEARS,
-  ONLINE_DB_PERIOD_MONTHS,
   WHATSAPP_AI_MONTHLY_USD,
   WHATSAPP_AI_PERIOD_MONTHS,
   licenseApiBase,
@@ -25,9 +23,8 @@ const apiBase = licenseApiBase();
       <h1>Renew WhatsApp, AI or online DB</h1>
       <p class="lead">
         CareFlow Windows license stays active. Monthly software renews separately. These hosted extras
-        auto-off: Online DB after {ONLINE_DB_PERIOD_YEARS} year (${ONLINE_DB_ANNUAL_USD}) on annual,
-        or {ONLINE_DB_PERIOD_MONTHS} month (${ONLINE_DB_MONTHLY_USD}) on monthly. WhatsApp / AI after
-        {WHATSAPP_AI_PERIOD_MONTHS} month (${WHATSAPP_AI_MONTHLY_USD}). Only off or expired extras
+        auto-off: Online DB after {ONLINE_DB_PERIOD_YEARS} year (${ONLINE_DB_ANNUAL_USD}). WhatsApp / AI after
+        {WHATSAPP_AI_PERIOD_MONTHS} month ($10/mo each). Only off or expired extras
         show up to pay — already-on services stay hidden. Payment turns them back on from that day.
       </p>
     </div>
@@ -40,7 +37,7 @@ const apiBase = licenseApiBase();
         </li>
         <li>
           <strong>2. Pick what to switch on</strong>
-          <span>Only services that are off or expired appear here. Already-on extras stay hidden. WhatsApp + AI share one $30 fee.</span>
+          <span>Only services that are off or expired appear here. Already-on extras stay hidden. WhatsApp and AI are $10/mo each.</span>
         </li>
         <li>
           <strong>3. Pay — they enable again</strong>
@@ -119,7 +116,7 @@ const apiBase = licenseApiBase();
   </section>
 </Layout>
 
-<script define:vars={{ apiBase, ONLINE_DB_ANNUAL_USD, ONLINE_DB_MONTHLY_USD, WHATSAPP_AI_MONTHLY_USD }}>
+<script define:vars={{ apiBase, ONLINE_DB_ANNUAL_USD }}>
   const lookupForm = document.getElementById('lookup-form');
   const lookupErr = document.getElementById('lookup-err');
   const lookupBtn = document.getElementById('lookup-btn');
@@ -147,22 +144,20 @@ const apiBase = licenseApiBase();
   let onlineDbIsMonthly = false;
 
   function onlineDbAmount() {
-    return onlineDbIsMonthly ? ONLINE_DB_MONTHLY_USD : ONLINE_DB_ANNUAL_USD;
+    return ONLINE_DB_ANNUAL_USD;
   }
 
   function onlineDbSuffix() {
-    return onlineDbIsMonthly ? '/mo' : '/yr';
+    return '/yr';
   }
 
   function applyOnlineDbLabels() {
     const hint = document.getElementById('opt-db-hint');
     const price = document.getElementById('opt-db-price');
     if (hint) {
-      hint.textContent = onlineDbIsMonthly
-        ? 'Cloud clinic data · $' + ONLINE_DB_MONTHLY_USD + ' for 1 month'
-        : 'Cloud clinic data · $' + ONLINE_DB_ANNUAL_USD + ' for 1 year';
+      hint.textContent = 'Cloud clinic data · $' + ONLINE_DB_ANNUAL_USD + ' for 1 year';
     }
-    if (price) price.textContent = '+$' + onlineDbAmount() + onlineDbSuffix();
+    if (price) price.textContent = '+$' + ONLINE_DB_ANNUAL_USD + '/yr';
   }
 
   function preferLocalHttp(url) {
@@ -198,16 +193,15 @@ const apiBase = licenseApiBase();
   }
 
   function calc() {
-    const dbFee = isOffered(optDb) && optDb.checked ? onlineDbAmount() : 0;
-    const monthly =
-      (isOffered(optWa) && optWa.checked) || (isOffered(optAi) && optAi.checked)
-        ? WHATSAPP_AI_MONTHLY_USD
-        : 0;
-    const total = dbFee + monthly;
+    const dbFee = isOffered(optDb) && optDb.checked ? ONLINE_DB_ANNUAL_USD : 0;
+    const waFee = isOffered(optWa) && optWa.checked ? 10 : 0;
+    const aiFee = isOffered(optAi) && optAi.checked ? 10 : 0;
+    const hostedMonthly = waFee + aiFee;
+    const total = dbFee + hostedMonthly;
     if (totalEl) totalEl.textContent = String(total);
     const parts = [];
-    if (dbFee) parts.push('$' + dbFee + onlineDbSuffix());
-    if (monthly) parts.push('$' + monthly + '/mo');
+    if (dbFee) parts.push('$' + dbFee + '/yr');
+    if (hostedMonthly) parts.push('$' + hostedMonthly + '/mo');
     if (renewBtn) renewBtn.disabled = total === 0;
     if (renewText && !renewBtn?.disabled) {
       renewText.textContent = total ? 'Pay & turn back on — ' + parts.join(' + ') : 'Select a service to renew';
