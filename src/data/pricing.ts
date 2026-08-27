@@ -60,29 +60,44 @@ export const BASE_FEATURES = [
 
 export const INCLUDED_SOFTWARE_ADDONS = [
   {
+    key: 'doctorDashboard',
+    label: 'Doctor Dashboard',
+    hint: 'Doctor queue, OPD visits & electronic prescriptions (EMR)',
+  },
+  {
+    key: 'reception',
+    label: 'Reception & Token Desk',
+    hint: 'Patient registration, appointment booking & token queue management',
+  },
+  {
+    key: 'billing',
+    label: 'Billing & Invoices',
+    hint: 'Create itemized invoices, track payments & OPD fee settlements',
+  },
+  {
     key: 'labDashboard',
     label: 'Lab Dashboard',
-    hint: 'Lab technician panel & results',
+    hint: 'Lab technician panel, test templates & result reports',
   },
   {
     key: 'opdReports',
     label: 'OPD Reports',
-    hint: 'Receptionist daily invoice & doctor fee settlement',
+    hint: 'Daily financial settlement & doctor fee distribution reports',
   },
   {
     key: 'statistics',
-    label: 'Statistics',
-    hint: 'Charts & clinic analytics',
+    label: 'Clinic Analytics & Stats',
+    hint: 'Visual charts, patient metrics & income insights',
   },
   {
     key: 'manageUsers',
-    label: 'Extra Admins',
-    hint: 'Extra admin accounts. The first admin can already manage staff.',
+    label: 'Staff & Admin Management',
+    hint: 'Manage doctor profiles, receptionists, lab techs & admin accounts',
   },
   {
     key: 'chat',
-    label: 'Staff Chat',
-    hint: 'In-app staff chat on LAN & Online DB',
+    label: 'Staff Team Chat',
+    hint: 'Internal real-time messaging between doctors, receptionists & staff',
   },
 ] as const;
 
