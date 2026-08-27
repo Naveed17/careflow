@@ -21,8 +21,8 @@ const apiBase = licenseApiBase();
   <div class="cf-pkg__head" data-reveal>
     <h2>Choose your CareFlow plan</h2>
     <p>
-      Annual (Salana) package is <strong>₨30,000/year</strong> ($108).
-      Monthly package is <strong>₨5,000/month</strong> ($18).
+      Annual package is <strong>$108/year</strong>.
+      Monthly package is <strong>$18/month</strong>.
       All software features are included in the package. WhatsApp and AI setup fees apply if enabled.
     </p>
   </div>
@@ -38,8 +38,8 @@ const apiBase = licenseApiBase();
             </svg>
           </span>
           <span class="cf-pkg__plan-copy">
-            <strong>Annual (Salana)</strong>
-            <small>₨30,000/yr · $108/yr</small>
+            <strong>Annual</strong>
+            <small>$108/year</small>
           </span>
           <span class="cf-pkg__plan-badge">Popular</span>
         </button>
@@ -52,7 +52,7 @@ const apiBase = licenseApiBase();
           </span>
           <span class="cf-pkg__plan-copy">
             <strong>Monthly</strong>
-            <small>₨5,000/mo · $18/mo</small>
+            <small>$18/month</small>
           </span>
         </button>
       </div>
@@ -247,7 +247,7 @@ const apiBase = licenseApiBase();
     }
     if (coreTitle) {
       coreTitle.textContent =
-        billingInterval === 'monthly' ? 'Monthly package · All software included' : 'Annual package (Salana) · All software included';
+        billingInterval === 'monthly' ? 'Monthly package · All software included' : 'Annual package · All software included';
     }
     if (onceEl) {
       onceEl.textContent =

@@ -67,7 +67,7 @@ export const faqs = [
   {
     question: 'What does online database, WhatsApp and AI cost?',
     answer:
-      'CareFlow offers an Annual (Salana) package at ₨30,000/year ($108/yr) and a Monthly package at ₨5,000/month ($18/mo). All software features are included in the package. WhatsApp and AI setup fees are $10 setup each with $10/mo hosted usage each. Online database is $30/year.',
+      'CareFlow offers an Annual package at $108/year and a Monthly package at $18/month. All software features are included in the package. WhatsApp and AI setup fees are $10/mo hosted usage each. Online database is $30/year.',
   },
   {
     question: 'How do I renew WhatsApp, AI or online database after they auto-off?',
