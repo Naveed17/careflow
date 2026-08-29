@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 // Change this to your real production domain before deploy.
-const site = process.env.SITE || 'https://careflow.app';
+const site = process.env.SITE || 'https://careflow-flame.vercel.app';
 
 // https://astro.build/config
 export default defineConfig({

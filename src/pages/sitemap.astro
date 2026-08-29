@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const pages = [
+  {
+    title: 'Home / Overview',
+    path: '/',
+    description: 'CareFlow Windows desktop clinic management software — patients, OPD tokens, prescriptions, billing & lab.',
+  },
+  {
+    title: 'Renew License & Add-ons',
+    path: '/renew',
+    description: 'Renew your CareFlow license key, online database subscription, or WhatsApp & AI add-ons.',
+  },
+  {
+    title: 'Privacy Policy',
+    path: '/privacy',
+    description: 'CareFlow data protection policy, local device storage details, and Google Drive backup privacy scope.',
+  },
+  {
+    title: 'XML Sitemap (Search Engines)',
+    path: '/sitemap-index.xml',
+    description: 'XML Sitemap index for Google Search Console and web crawlers.',
+  },
+];
+---
+
+<Layout
+  title="Sitemap - CareFlow Clinic Management Software"
+  description="Sitemap for CareFlow website. Quick links to all CareFlow pages, renewal portal, and privacy policy."
+  canonicalPath="/sitemap"
+>
+  <section class="sitemap-container">
+    <div class="sitemap-card">
+      <span class="badge">Website Directory</span>
+      <h1>CareFlow Sitemap</h1>
+      <p class="intro">
+        Browse all official pages and resources available on the CareFlow clinic management portal.
+      </p>
+
+      <div class="grid">
+        {pages.map((p) => (
+          <a href={p.path} class="page-item">
+            <h2>{p.title}</h2>
+            <p>{p.description}</p>
+            <span class="link-text">Visit page &rarr;</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .sitemap-container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+  .sitemap-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 48px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  }
+  .badge {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0284c7;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+  }
+  .intro {
+    font-size: 1.05rem;
+    color: #64748b;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 16px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 20px;
+  }
+  .page-item {
+    display: block;
+    padding: 24px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .page-item:hover {
+    border-color: #0284c7;
+    background: #f0f9ff;
+    transform: translateY(-2px);
+  }
+  .page-item h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f2a1a;
+    margin: 0 0 8px 0;
+  }
+  .page-item p {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+  }
+  .link-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0284c7;
+  }
+</style>
