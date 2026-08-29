@@ -15,7 +15,7 @@ const enabled = Boolean(token) && !isSuccessPage;
 
 {enabled && (
   <>
-    <script is:inline src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+    <script is:inline defer src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
     <script is:inline define:vars={{ token, env, successBase }}>
       (function bootPaddle() {
         var Paddle = window.Paddle;

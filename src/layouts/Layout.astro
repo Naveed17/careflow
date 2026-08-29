@@ -194,9 +194,22 @@ const jsonLd = [
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    />
+    <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <PaddleCheckout />
@@ -206,7 +219,7 @@ const jsonLd = [
     <header class="top" data-header>
       <div class="top-inner">
         <a class="brand" href="/" aria-label="CareFlow home">
-          <img src="/brand/logo.png" alt="CareFlow clinic management logo" width="36" height="36" />
+          <img src="/brand/logo.png" alt="CareFlow clinic management logo" width="36" height="36" fetchpriority="high" decoding="async" />
           <span>CareFlow</span>
         </a>
         <nav aria-label="Primary">
@@ -243,7 +256,7 @@ const jsonLd = [
           <div class="foot-grid">
             <div class="foot-brand">
               <div class="brand-row">
-                <img src="/brand/logo.png" alt="CareFlow logo" width="36" height="36" />
+                <img src="/brand/logo.png" alt="CareFlow logo" width="36" height="36" loading="lazy" decoding="async" />
                 <strong>CareFlow</strong>
               </div>
               <p>Windows desktop clinic management — patients, OPD tokens, prescriptions, billing &amp; lab.</p>
