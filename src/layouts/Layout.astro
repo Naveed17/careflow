@@ -188,6 +188,7 @@ const jsonLd = [
 
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/brand/logo.png" />
+    <link rel="preload" as="image" href="/brand/logo.png" type="image/png" fetchpriority="high" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 
@@ -260,7 +261,7 @@ const jsonLd = [
                 <strong>CareFlow</strong>
               </div>
               <p>Windows desktop clinic management — patients, OPD tokens, prescriptions, billing &amp; lab.</p>
-              <div class="social" aria-label="Social">
+              <div class="social" aria-hidden="true">
                 <span></span><span></span><span></span>
               </div>
             </div>
