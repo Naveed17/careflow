@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Privacy Policy - CareFlow Clinic Management Software"
+  description="Privacy Policy for CareFlow Clinic Management Software. Learn how we handle your local clinic data and Google Drive backup privacy."
+  canonicalPath="/privacy"
+>
+  <section class="privacy-container">
+    <div class="privacy-card">
+      <span class="badge">CareFlow Privacy & Security</span>
+      <h1>Privacy Policy</h1>
+      <p class="updated"><em>Last Updated: August 29, 2026</em></p>
+
+      <p class="intro">
+        CareFlow ("we", "our", or "us") is dedicated to protecting the privacy, confidentiality, and security of healthcare providers, doctors, and patients who use our Clinic Management Application.
+      </p>
+
+      <h2>1. Information Collection & Local Storage</h2>
+      <p>
+        CareFlow operates as a local Windows desktop application. All medical records, patient profiles, medical prescriptions, laboratory tests, and financial billing invoices created in CareFlow are stored <strong>locally on your own device</strong> inside a secured SQLite database file. We do not transmit your patient health records to external servers without your explicit action.
+      </p>
+
+      <h2>2. Google Drive Backup Integration</h2>
+      <p>
+        CareFlow offers an optional Cloud Backup feature via Google Drive. When you choose to connect your Google Account:
+      </p>
+      <ul>
+        <li><strong>Restricted Scope Access (<code>drive.file</code>):</strong> CareFlow only requests permission to access files that are created specifically by the CareFlow application. It cannot view, edit, or delete any other personal files in your Google Drive.</li>
+        <li><strong>Dedicated Folder:</strong> CareFlow automatically creates a folder named <code>CareFlow Backups</code> inside your personal Google Drive account to store compressed clinic database backup archives (ZIP format).</li>
+        <li><strong>No Third-Party Sharing:</strong> Your backup files and credentials remain strictly confidential. We never sell, share, or analyze your Google account data or medical backups with any third parties or advertisers.</li>
+      </ul>
+
+      <h2>3. Data Protection & Token Security</h2>
+      <p>
+        We utilize standard OAuth 2.0 PKCE authentication protocols for Google integrations. Authentication refresh tokens are stored locally on your machine. CareFlow staff never have access to your Google Account login details or your private clinic backups.
+      </p>
+
+      <h2>4. User Control & Access Revocation</h2>
+      <p>
+        You retain 100% ownership and control over your clinic data. You may disconnect Google Drive integration at any time from within CareFlow Settings or by revoking application permissions directly on your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">Google Account Security page</a>.
+      </p>
+
+      <h2>5. Contact Us</h2>
+      <p>
+        If you have any questions regarding this Privacy Policy, please contact our support team at:
+      </p>
+      <div class="contact-box">
+        <p><strong>Email:</strong> navid@gmail.com</p>
+        <p><strong>Website:</strong> <a href="https://careflow-flame.vercel.app">https://careflow-flame.vercel.app</a></p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .privacy-container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+  .privacy-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 48px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  }
+  .badge {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0284c7;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 8px 0;
+  }
+  .updated {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 16px;
+  }
+  .intro {
+    font-size: 1.1rem;
+    color: #334155;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0f2a1a;
+    margin-top: 32px;
+    margin-bottom: 12px;
+  }
+  p, li {
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  ul {
+    padding-left: 24px;
+    margin-bottom: 24px;
+  }
+  li {
+    margin-bottom: 8px;
+  }
+  a {
+    color: #0284c7;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+  .contact-box {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px 24px;
+    border: 1px solid #e2e8f0;
+    margin-top: 16px;
+  }
+  .contact-box p {
+    margin: 4px 0;
+    color: #1e293b;
+  }
+</style>
